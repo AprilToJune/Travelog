@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import UploadButton from 'components/home/UploadButton';
+import MapContainer from 'components/home/map';
+import ListContainer from 'components/home/list';
 
 const Container = styled.div`
   position: relative;
@@ -14,7 +16,8 @@ const Container = styled.div`
 
 const Home = () => (
   <Container>
-    Home
+    <MapContainer />
+    <ListContainer />
     <UploadButton />
   </Container>
 );
