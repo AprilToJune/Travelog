@@ -1,8 +1,18 @@
 import React from 'react';
-import './App.css';
+import { Route, Switch } from 'react-router-dom';
+
+import Home from 'pages/Home';
+import Hi from 'components/Hi';
 
 function App() {
-  return <div className="App">프로젝트 초기화</div>;
+  return (
+    <div>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/hi" component={Hi} />
+      </Switch>
+    </div>
+  );
 }
 
 export default App;
