@@ -12,13 +12,6 @@ const Container = styled.div`
 
 const Map = () => {
   useEffect(() => {
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_API_KEY}`;
-    document.head.appendChild(script);
-  }, []);
-
-  useEffect(() => {
     const data = geojson.features;
     let coordinates = []; // 좌표 저장 배열
     // let name = ''; // 행정구 이름
