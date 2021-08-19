@@ -3,10 +3,12 @@ import { Route, Switch } from 'react-router-dom';
 
 import Home from 'pages/Home';
 import Upload from 'pages/Upload';
-import firebaseInit from './firebaseInit';
+import { firestore } from './firebaseInit';
 
 function App() {
-  console.log(firebaseInit);
+  firestore.collection('data').onSnapshot((snapshot) => {
+    snapshot.docs.map((doc) => console.log(doc.id));
+  });
   return (
     <div>
       <Switch>
