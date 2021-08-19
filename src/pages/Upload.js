@@ -1,10 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import UploadButton from 'components/home/UploadButton';
-
 const Container = styled.div`
-  position: relative;
   display: flex;
   width: 100vw;
   height: 100vh;
@@ -12,11 +9,6 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Home = () => (
-  <Container>
-    Home
-    <UploadButton />
-  </Container>
-);
+const Upload = () => <Container>Upload</Container>;
 
-export default Home;
+export default Upload;
