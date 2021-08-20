@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import BackButton from 'components/upload/BackButton';
+import ImageUploadButton from 'components/upload/ImageUploadButton';
 
 const Container = styled.div`
   position: relative;
@@ -15,7 +16,7 @@ const Container = styled.div`
 const Upload = () => (
   <Container>
     <BackButton />
-    Upload
+    <ImageUploadButton />
   </Container>
 );
 
