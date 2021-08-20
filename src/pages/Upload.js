@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import BackButton from 'components/upload/BackButton';
+
 const Container = styled.div`
+  position: relative;
   display: flex;
   width: 100vw;
   height: 100vh;
@@ -9,6 +12,11 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Upload = () => <Container>Upload</Container>;
+const Upload = () => (
+  <Container>
+    <BackButton />
+    Upload
+  </Container>
+);
 
 export default Upload;
