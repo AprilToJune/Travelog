@@ -1,7 +1,6 @@
 /* eslint-disable */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-
 import { useUploadContext } from 'contexts/UploadContext';
 
 const Container = styled.div`
@@ -30,8 +29,12 @@ const PreviewImageContainer = styled.div`
   row-gap: 1vw;
 `;
 
+const Error = styled.div`
+  color: #fc1111;
+`;
+
 const ImageUploadButton = () => {
-  const { previewURL, onChangeFileInput } = useUploadContext();
+  const { previewURL, onChangeFileInput, error } = useUploadContext();
 
   return (
     <Container>
@@ -46,6 +49,7 @@ const ImageUploadButton = () => {
         type="file"
         onChange={onChangeFileInput}
       />
+      <Error>{error ? error : ''}</Error>
     </Container>
   );
 };

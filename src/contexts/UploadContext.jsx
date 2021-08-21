@@ -1,10 +1,4 @@
-import React, {
-  useContext,
-  createContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { useContext, createContext, useState, useEffect } from 'react';
 
 import ImageUploadSection from 'components/upload/imageUploadSection/';
 import TitleSection from 'components/upload/titleSection/';
@@ -45,8 +39,14 @@ const UploadContext = createContext({});
 const UploadProvider = ({ children }) => {
   const [step, setStep] = useState(1);
   const [currentSection, SetCurrentSection] = useState(<TitleSection />);
-  const [images, setImages] = useState([]);
   const [previewURL, setPreviewURL] = useState([]);
+
+  const [images, setImages] = useState([]);
+  const [title, setTitle] = useState('');
+  const [date, setDate] = useState('');
+  const [location, setLocation] = useState('');
+
+  const [error, setError] = useState('');
 
   // step에 따라 보여주는 컴포넌트를 바꿈
   useEffect(() => {
@@ -55,17 +55,60 @@ const UploadProvider = ({ children }) => {
     });
   }, [step]);
 
-  const onClickNextStep = useCallback(() => {
+  const validation = () => {
+    // title
+    if (step === 1) {
+      if (!title) {
+        setError('타이틀은 필수라구?');
+        return false;
+      }
+      setError('');
+      return true;
+    }
+    // date
+    if (step === 2) {
+      if (!date) {
+        setError('날짜는 필수라구?');
+        return false;
+      }
+      setError('');
+      return true;
+    }
+    // location
+    if (step === 3) {
+      if (!location) {
+        setError('위치는 필수라구?');
+        return false;
+      }
+      setError('');
+      return true;
+    }
+    // image
+    if (step === 4) {
+      if (!images.length) {
+        setError('사진도 필수라고?');
+        return false;
+      }
+      setError('');
+      return true;
+    }
+
+    return true;
+  };
+
+  const onClickNextStep = () => {
     const nextStep = step + 1;
+    if (!validation()) return;
     if (nextStep > ContentList.length) return;
     setStep(nextStep);
-  }, [step]);
+  };
 
-  const onClickBeforeStep = useCallback(() => {
+  const onClickBeforeStep = () => {
     const beforeStep = step - 1;
+    setError('');
     if (beforeStep <= 0) return;
     setStep(beforeStep);
-  }, [step]);
+  };
 
   // preview 이미지 파일 생성하는 함수
   const onChangeFileInput = (event) => {
@@ -81,13 +124,22 @@ const UploadProvider = ({ children }) => {
   return (
     <UploadContext.Provider
       value={{
-        images,
         previewURL,
         step,
         currentSection,
         ContentList,
 
+        images,
+        title,
+        date,
+        location,
+        error,
+
         setImages,
+        setTitle,
+        setDate,
+        setLocation,
+
         setPreviewURL,
         setStep,
         onChangeFileInput,

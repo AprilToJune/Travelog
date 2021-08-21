@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useUploadContext } from 'contexts/UploadContext';
 
 const Container = styled.div`
   position: absolute;
@@ -8,6 +9,20 @@ const Container = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const ResultSection = () => <Container>결과입니다.</Container>;
+const ResultSection = () => {
+  const { previewURL, title, date, location } = useUploadContext();
+  return (
+    <Container>
+      <div>{title}</div>
+      <div>{date}</div>
+      <div>{location}</div>
+      {previewURL.map((url) => (
+        <div>
+          <img alt="preview_image" src={url} />
+        </div>
+      ))}
+    </Container>
+  );
+};
 
 export default ResultSection;
