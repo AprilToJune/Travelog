@@ -8,17 +8,29 @@ import React, {
 
 import ImageUploadSection from 'components/upload/imageUploadSection/';
 import TitleSection from 'components/upload/titleSection/';
+import DateSection from 'components/upload/dateSection/';
+import LocationSection from 'components/upload/locationSection/';
 
 const ContentList = [
   {
     step: 1,
     content: <TitleSection />,
-    label: '타이틀 입력',
+    label: '타이틀',
   },
   {
     step: 2,
+    content: <DateSection />,
+    label: '날짜',
+  },
+  {
+    step: 3,
+    content: <LocationSection />,
+    label: '위치',
+  },
+  {
+    step: 4,
     content: <ImageUploadSection />,
-    label: '이미지 등록',
+    label: '이미지',
   },
 ];
 
