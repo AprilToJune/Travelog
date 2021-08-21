@@ -63,6 +63,7 @@ const Number = styled.div`
 
 const Label = styled.span`
   font-size: 12px;
+  white-space: nowrap;
 `;
 
 const StepperContainer = () => {

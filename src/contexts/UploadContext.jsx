@@ -10,6 +10,7 @@ import ImageUploadSection from 'components/upload/imageUploadSection/';
 import TitleSection from 'components/upload/titleSection/';
 import DateSection from 'components/upload/dateSection/';
 import LocationSection from 'components/upload/locationSection/';
+import ResultSection from 'components/upload/resultSection/';
 
 const ContentList = [
   {
@@ -31,6 +32,11 @@ const ContentList = [
     step: 4,
     content: <ImageUploadSection />,
     label: '이미지',
+  },
+  {
+    step: 5,
+    content: <ResultSection />,
+    label: '완성',
   },
 ];
 
