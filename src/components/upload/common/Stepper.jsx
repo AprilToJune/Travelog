@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React from 'react';
 import styled from 'styled-components';
 
@@ -18,17 +17,31 @@ const Stepper = styled.div`
 
 const CurrentStep = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  column-gap: 5px;
+
+  ::after {
+    content: ${(props) => (props.isLast ? 'none' : '""')};
+    width: 50px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Step = styled.div`
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  column-gap: 5px;
+
+  ::after {
+    content: ${(props) => (props.isLast ? 'none' : '""')};
+    width: 50px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const Number = styled.div`
@@ -48,8 +61,7 @@ const Number = styled.div`
   height: 24px;
 `;
 
-const Label = styled.p`
-  margin-top: 5px;
+const Label = styled.span`
   font-size: 12px;
 `;
 
@@ -57,19 +69,19 @@ const StepperContainer = () => {
   const { ContentList, step } = useUploadContext();
   return (
     <Stepper>
-      {ContentList.map((item) => {
-        return step === item.step ? (
-          <CurrentStep>
-            <Number isSelect={true}>{item.step}</Number>
+      {ContentList.map((item, idx) =>
+        step === item.step ? (
+          <CurrentStep key={item.label} isLast={ContentList.length - 1 === idx}>
+            <Number isSelect>{item.step}</Number>
             <Label>{item.label}</Label>
           </CurrentStep>
         ) : (
-          <Step>
+          <Step key={item.label} isLast={ContentList.length - 1 === idx}>
             <Number isSelect={false}>{item.step}</Number>
             <Label>{item.label}</Label>
           </Step>
-        );
-      })}
+        ),
+      )}
     </Stepper>
   );
 };
