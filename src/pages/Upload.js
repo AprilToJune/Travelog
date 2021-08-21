@@ -1,22 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import BackButton from 'components/upload/BackButton';
-import ImageUploadButton from 'components/upload/ImageUploadButton';
+import UploadContent from 'components/upload';
+import BackButton from 'components/upload/common/BackButton';
+import Stepper from 'components/upload/common/Stepper';
+import LeftStepButton from 'components/upload/common/LeftStepButton';
+import RightStepButton from 'components/upload/common/RightStepButton';
 
 const Container = styled.div`
   position: relative;
-  display: flex;
   width: 100vw;
   height: 100vh;
-  justify-content: center;
-  align-items: center;
 `;
 
 const Upload = () => (
   <Container>
     <BackButton />
-    <ImageUploadButton />
+    <Stepper />
+    <UploadContent />
+    <LeftStepButton />
+    <RightStepButton />
   </Container>
 );
 

@@ -2,21 +2,17 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const Container = styled.form`
+import { useUploadContext } from 'contexts/UploadContext';
+
+const Container = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  width: 84vw;
-  height: 100%;
   flex-direction: column;
 `;
 
 const FileInput = styled.input`
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translate(-50%);
   background-color: rgba(0, 0, 0, 0.1);
 `;
 
@@ -27,26 +23,16 @@ const PreviewImage = styled.img`
 `;
 
 const PreviewImageContainer = styled.div`
+  width: 83vw;
+  overflow: scroll;
+  overflow-y: hidden;
   display: flex;
-  flex-wrap: wrap;
   row-gap: 1vw;
-  column-gap: 1vw;
-  align-items: center;
 `;
 
 const ImageUploadButton = () => {
-  const [files, setFiles] = useState([]);
-  const [previewURL, setPreviewURL] = useState([]);
+  const { previewURL, onChangeFileInput } = useUploadContext();
 
-  const onChangeFileInput = (event) => {
-    event.preventDefault();
-    const getFile = event.target.files;
-    for (let i = 0; i < getFile.length; i++) {
-      setFiles((prevState) => [...prevState, getFile[i]]);
-      const imageURL = URL.createObjectURL(getFile[i]);
-      setPreviewURL((prevState) => [...prevState, imageURL]);
-    }
-  };
   return (
     <Container>
       <PreviewImageContainer>

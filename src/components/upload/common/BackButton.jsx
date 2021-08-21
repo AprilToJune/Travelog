@@ -12,6 +12,7 @@ const Container = styled.div`
   margin: 5px;
   border-radius: 10px;
   transition: all 0.3s ease;
+  z-index: 5;
 
   :hover {
     cursor: pointer;
@@ -20,11 +21,11 @@ const Container = styled.div`
 `;
 
 const BackButton = () => (
-  <Container>
-    <Link to="/">
+  <Link to="/">
+    <Container>
       <ArrowBackIcon />
-    </Link>
-  </Container>
+    </Container>
+  </Link>
 );
 
 export default BackButton;
