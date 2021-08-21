@@ -1,8 +1,8 @@
-/* global kakao */
-import React, { useEffect } from 'react';
+/* global kakao */ /* eslint-disable */
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import geojson from 'lib/TL_SCCO_SIG.json';
-// import geojson from 'lib/TL_SCCO_CTPRVN.json';
+import geojson9 from 'lib/TL_SCCO_SIG.json';
+import geojson12 from 'lib/TL_SCCO_CTPRVN.json';
 
 const Container = styled.div`
   width: 80%;
@@ -10,20 +10,82 @@ const Container = styled.div`
   background-color: white;
 `;
 
+const mapOption = {
+  center: new kakao.maps.LatLng(37.5666103, 126.9783882), // 지도의 중심좌표
+  level: 12, // 지도의 확대 레벨
+};
+
 const Map = () => {
+  const [mapLevel, setMapLevel] = useState(12);
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const geo0 = [];
+  const geo9 = mapPolygon(geojson9);
+  const geo12 = mapPolygon(geojson12);
+  const geolen = [0, 249, 17];
+  const [pregeo, setPregeo] = useState(geo12);
+  const [geo, setGeo] = useState(geo12);
+
+  const onClickButton = () => {
+    const level = map.current.getLevel();
+    setMapLevel(level);
+  };
+
+  const onChangeZoomLevel = () => {
+    const level = map.current.getLevel();
+    setMapLevel(level);
+  };
+
   useEffect(() => {
+    //11 mapLevel 13 : 12
+    //7 mapLevel 10 : 9
+    //1 mapLevel 6 : x
+    let geol = geo.length;
+    console.log(geol, geolen);
+    if (geol === geolen[2]) {
+      console.log('12');
+      if (0 < mapLevel && mapLevel < 7) {
+        setPregeo(geo);
+        setGeo(geo0);
+      } else if (6 < mapLevel && mapLevel < 11) {
+        setPregeo(geo);
+        setGeo(geo9);
+      }
+    } else if (geol === geolen[1]) {
+      console.log('9');
+      if (0 < mapLevel && mapLevel < 7) {
+        setPregeo(geo);
+        setGeo(geo0);
+      } else if (10 < mapLevel && mapLevel < 14) {
+        setPregeo(geo);
+        setGeo(geo12);
+      }
+    } else if (geol === geolen[0]) {
+      console.log('0');
+      if (6 < mapLevel && mapLevel < 11) {
+        setPregeo(geo);
+        setGeo(geo9);
+      } else if (10 < mapLevel && mapLevel < 14) {
+        setPregeo(geo);
+        setGeo(geo12);
+      }
+    }
+  }, [mapLevel]);
+
+  useEffect(() => {
+    pregeo.forEach((val) => {
+      val.setMap(null);
+    });
+    geo.forEach((val) => {
+      val.setMap(map.current);
+    });
+  }, [geo]);
+
+  function mapPolygon(geojson) {
     const data = geojson.features;
+    let polygons = [];
     let coordinates = []; // 좌표 저장 배열
     // let name = ''; // 행정구 이름
-    let polygon = [];
-
-    const mapContainer = document.getElementById('map'); // 지도를 표시할 div
-    const mapOption = {
-      center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-      level: 9, // 지도의 확대 레벨
-    };
-
-    const map = new kakao.maps.Map(mapContainer, mapOption);
 
     const makePolygon = (coordi) => {
       const path = [];
@@ -47,15 +109,30 @@ const Map = () => {
 
     data.forEach((val) => {
       coordinates = val.geometry.coordinates;
-      // name = val.properties.CTP_KOR_NM;
-      polygon = makePolygon(coordinates);
-      polygon.setMap(map);
+      polygons.push(makePolygon(coordinates));
     });
+    return polygons;
+  }
+
+  useEffect(() => {
+    map.current = new kakao.maps.Map(mapContainer.current, mapOption);
+    geo.forEach((val) => {
+      val.setMap(map.current);
+    });
+
+    kakao.maps.event.addListener(
+      map.current,
+      'zoom_changed',
+      onChangeZoomLevel,
+    );
   }, []);
 
   return (
     <Container>
-      <div id="map" style={{ width: '100%', height: '100%' }} />
+      <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+      <button type="button" onClick={onClickButton}>
+        {mapLevel}
+      </button>
     </Container>
   );
 };
