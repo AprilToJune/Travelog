@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 
 import { useUploadContext } from 'contexts/UploadContext';
 
 const Container = styled.div`
   position: absolute;
   top: 50%;
-  right: 0;
+  left: 0;
   transform: translate(0, -50%);
   padding: 10px;
   margin: 5px;
@@ -22,11 +22,13 @@ const Container = styled.div`
 `;
 
 const LeftStepButton = () => {
-  const { onClickNextStep } = useUploadContext();
+  const { onClickBeforeStep, step } = useUploadContext();
   return (
-    <Container onClick={onClickNextStep}>
-      <NavigateNextIcon />
-    </Container>
+    step !== 1 && (
+      <Container onClick={onClickBeforeStep}>
+        <NavigateBeforeIcon />
+      </Container>
+    )
   );
 };
 
