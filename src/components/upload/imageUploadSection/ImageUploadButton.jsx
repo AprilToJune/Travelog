@@ -93,7 +93,7 @@ const ImageUploadButton = () => {
                         let result = (
                           <Badge
                             color="primary"
-                            badgeContent={`${idx}`}
+                            badgeContent={idx === 0 ? 'title' : `${idx + 1}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
