@@ -1,7 +1,6 @@
 /* global kakao */ /* eslint-disable */
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import geojson9 from 'lib/TL_SCCO_SIG.json';
 import geojson12 from 'lib/TL_SCCO_CTPRVN.json';
 
 const Container = styled.div`
@@ -11,8 +10,8 @@ const Container = styled.div`
 `;
 
 const mapOption = {
-  center: new kakao.maps.LatLng(37.5666103, 126.9783882), // 지도의 중심좌표
-  level: 12, // 지도의 확대 레벨
+  center: new kakao.maps.LatLng(35.93450063771281, 127.75854915532611), // 지도의 중심좌표
+  level: 13, // 지도의 확대 레벨
 };
 
 const Map = () => {
@@ -20,23 +19,17 @@ const Map = () => {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
-  const geo0 = [];
-  const geo9 = makePolygon(geojson9);
-  const geo12 = makePolygon(geojson12);
-  const geolen = [0, 249, 17];
-  const [pregeo, setPregeo] = useState(geo12);
-  const [geo, setGeo] = useState(geo12);
+  const [polygons, setPolygons] = useState([]);
+  const [preLevel, setPreLevel] = useState(13);
 
   const [places, setPlaces] = useState(['제주특별자치도 제주시 첨단로 242']);
-  const [markers, setMarkers] = useState([]);
 
   function makePolygon(geojson) {
     const data = geojson.features;
-    let polygons = [];
-    let coordinates = []; // 좌표 저장 배열
-    // let name = ''; // 행정구 이름
+    let coordi = []; // 좌표 저장 배열
 
-    const makePolygon = (coordi) => {
+    data.forEach((val) => {
+      coordi = val.geometry.coordinates;
       const path = [];
       coordi.forEach((item) => {
         const points = [];
@@ -45,7 +38,8 @@ const Map = () => {
         });
         path.push(points);
       });
-      return new kakao.maps.Polygon({
+
+      const polygon = new kakao.maps.Polygon({
         path, // 그려질 다각형의 좌표 배열입니다
         strokeWeight: 2, // 선의 두께입니다
         strokeColor: '#004c80', // 선의 색깔입니다
@@ -54,19 +48,23 @@ const Map = () => {
         fillColor: '#fff', // 채우기 색깔입니다
         fillOpacity: 0.7, // 채우기 불투명도 입니다
       });
-    };
 
-    data.forEach((val) => {
-      coordinates = val.geometry.coordinates;
-      polygons.push(makePolygon(coordinates));
+      kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
+        polygon.setOptions({ fillColor: '#09f' });
+      });
+
+      kakao.maps.event.addListener(polygon, 'mouseout', function () {
+        polygon.setOptions({ fillColor: '#fff' });
+      });
+
+      kakao.maps.event.addListener(polygon, 'click', function (mouseEvent) {
+        polygon.setOptions({ fillColor: 'red' });
+      });
+
+      setPolygons((PreState) => [...PreState, polygon]);
+      polygon.setMap(map.current);
     });
-    return polygons;
   }
-
-  const onChangeZoomLevel = () => {
-    const level = map.current.getLevel();
-    setMapLevel(level);
-  };
 
   function makeMarkers(places) {
     const geocoder = new kakao.maps.services.Geocoder();
@@ -85,63 +83,29 @@ const Map = () => {
   }
 
   useEffect(() => {
-    //11 mapLevel 13 : 12
-    //7 mapLevel 10 : 9
-    //1 mapLevel 6 : x
-    let geol = geo.length;
-    console.log(geol, geolen);
-    if (geol === geolen[2]) {
-      console.log('12');
-      if (0 < mapLevel && mapLevel < 7) {
-        setPregeo(geo);
-        setGeo(geo0);
-      } else if (6 < mapLevel && mapLevel < 11) {
-        setPregeo(geo);
-        setGeo(geo9);
-      }
-    } else if (geol === geolen[1]) {
-      console.log('9');
-      if (0 < mapLevel && mapLevel < 7) {
-        setPregeo(geo);
-        setGeo(geo0);
-      } else if (10 < mapLevel && mapLevel < 14) {
-        setPregeo(geo);
-        setGeo(geo12);
-      }
-    } else if (geol === geolen[0]) {
-      console.log('0');
-      if (6 < mapLevel && mapLevel < 11) {
-        setPregeo(geo);
-        setGeo(geo9);
-      } else if (10 < mapLevel && mapLevel < 14) {
-        setPregeo(geo);
-        setGeo(geo12);
-      }
+    if (preLevel < 12 && 12 <= mapLevel) {
+      setPreLevel(13);
+      polygons.forEach((val) => {
+        val.setMap(map.current);
+      });
+    } else if (mapLevel < 12 && 12 <= preLevel) {
+      setPreLevel(0);
+      polygons.forEach((val) => {
+        val.setMap(null);
+      });
     }
   }, [mapLevel]);
 
   useEffect(() => {
-    pregeo.forEach((val) => {
-      val.setMap(null);
-    });
-    geo.forEach((val) => {
-      val.setMap(map.current);
-    });
-  }, [geo]);
-
-  useEffect(() => {
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
-    geo.forEach((val) => {
-      val.setMap(map.current);
-    });
+    makePolygon(geojson12);
 
     makeMarkers(places);
 
-    kakao.maps.event.addListener(
-      map.current,
-      'zoom_changed',
-      onChangeZoomLevel,
-    );
+    kakao.maps.event.addListener(map.current, 'zoom_changed', function () {
+      const level = map.current.getLevel();
+      setMapLevel(level);
+    });
   }, []);
 
   return (
