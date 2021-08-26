@@ -19,17 +19,46 @@ const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
   const mapContainer = useRef(null);
   const map = useRef(null);
+
   const geo0 = [];
-  const geo9 = mapPolygon(geojson9);
-  const geo12 = mapPolygon(geojson12);
+  const geo9 = makePolygon(geojson9);
+  const geo12 = makePolygon(geojson12);
   const geolen = [0, 249, 17];
   const [pregeo, setPregeo] = useState(geo12);
   const [geo, setGeo] = useState(geo12);
 
-  const onClickButton = () => {
-    const level = map.current.getLevel();
-    setMapLevel(level);
-  };
+  function makePolygon(geojson) {
+    const data = geojson.features;
+    let polygons = [];
+    let coordinates = []; // 좌표 저장 배열
+    // let name = ''; // 행정구 이름
+
+    const makePolygon = (coordi) => {
+      const path = [];
+      coordi.forEach((item) => {
+        const points = [];
+        item.forEach((coordinate) => {
+          points.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
+        });
+        path.push(points);
+      });
+      return new kakao.maps.Polygon({
+        path, // 그려질 다각형의 좌표 배열입니다
+        strokeWeight: 2, // 선의 두께입니다
+        strokeColor: '#004c80', // 선의 색깔입니다
+        strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid', // 선의 스타일입니다
+        fillColor: '#fff', // 채우기 색깔입니다
+        fillOpacity: 0.7, // 채우기 불투명도 입니다
+      });
+    };
+
+    data.forEach((val) => {
+      coordinates = val.geometry.coordinates;
+      polygons.push(makePolygon(coordinates));
+    });
+    return polygons;
+  }
 
   const onChangeZoomLevel = () => {
     const level = map.current.getLevel();
@@ -81,39 +110,6 @@ const Map = () => {
     });
   }, [geo]);
 
-  function mapPolygon(geojson) {
-    const data = geojson.features;
-    let polygons = [];
-    let coordinates = []; // 좌표 저장 배열
-    // let name = ''; // 행정구 이름
-
-    const makePolygon = (coordi) => {
-      const path = [];
-      coordi.forEach((item) => {
-        const points = [];
-        item.forEach((coordinate) => {
-          points.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
-        });
-        path.push(points);
-      });
-      return new kakao.maps.Polygon({
-        path, // 그려질 다각형의 좌표 배열입니다
-        strokeWeight: 2, // 선의 두께입니다
-        strokeColor: '#004c80', // 선의 색깔입니다
-        strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid', // 선의 스타일입니다
-        fillColor: '#fff', // 채우기 색깔입니다
-        fillOpacity: 0.7, // 채우기 불투명도 입니다
-      });
-    };
-
-    data.forEach((val) => {
-      coordinates = val.geometry.coordinates;
-      polygons.push(makePolygon(coordinates));
-    });
-    return polygons;
-  }
-
   useEffect(() => {
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
     geo.forEach((val) => {
@@ -130,9 +126,7 @@ const Map = () => {
   return (
     <Container>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      <button type="button" onClick={onClickButton}>
-        {mapLevel}
-      </button>
+      {mapLevel}
     </Container>
   );
 };
