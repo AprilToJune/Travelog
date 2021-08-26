@@ -27,6 +27,9 @@ const Map = () => {
   const [pregeo, setPregeo] = useState(geo12);
   const [geo, setGeo] = useState(geo12);
 
+  const [places, setPlaces] = useState(['제주특별자치도 제주시 첨단로 242']);
+  const [markers, setMarkers] = useState([]);
+
   function makePolygon(geojson) {
     const data = geojson.features;
     let polygons = [];
@@ -64,6 +67,22 @@ const Map = () => {
     const level = map.current.getLevel();
     setMapLevel(level);
   };
+
+  function makeMarkers(places) {
+    const geocoder = new kakao.maps.services.Geocoder();
+    places.forEach((place) => {
+      geocoder.addressSearch(place, function (result, status) {
+        // 정상적으로 검색이 완료됐으면
+        if (status === kakao.maps.services.Status.OK) {
+          const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
+          new kakao.maps.Marker({
+            map: map.current,
+            position: newPosition,
+          });
+        }
+      });
+    });
+  }
 
   useEffect(() => {
     //11 mapLevel 13 : 12
@@ -115,6 +134,8 @@ const Map = () => {
     geo.forEach((val) => {
       val.setMap(map.current);
     });
+
+    makeMarkers(places);
 
     kakao.maps.event.addListener(
       map.current,
