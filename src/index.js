@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import { resetServerContext } from 'react-beautiful-dnd';
 
 import './index.css';
 import UploadProvider from 'contexts/UploadContext';
@@ -16,3 +17,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root'),
 );
+
+resetServerContext();

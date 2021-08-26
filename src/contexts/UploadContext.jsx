@@ -115,9 +115,20 @@ const UploadProvider = ({ children }) => {
     event.preventDefault();
     const getFile = event.target.files;
     for (let i = 0; i < getFile.length; i += 1) {
-      setImages((prevState) => [...prevState, getFile[i]]);
-      const imageURL = URL.createObjectURL(getFile[i]);
-      setPreviewURL((prevState) => [...prevState, imageURL]);
+      const names = images.map((image) => image.id);
+      if (names.includes(getFile[i].name)) {
+        console.log('똑같은 이미지가 있습니다.'); // eslint-disable-line
+      } else {
+        setImages((prevState) => [
+          ...prevState,
+          { id: getFile[i].name, image: getFile[i] },
+        ]);
+        const imageURL = URL.createObjectURL(getFile[i]);
+        setPreviewURL((prevState) => [
+          ...prevState,
+          { id: getFile[i].name, url: imageURL },
+        ]);
+      }
     }
   };
 

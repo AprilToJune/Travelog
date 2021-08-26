@@ -1,6 +1,9 @@
 /* eslint-disable */
-import React from 'react';
+import React, { useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
+import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
+
 import { useUploadContext } from 'contexts/UploadContext';
 
 const Container = styled.div`
@@ -23,8 +26,8 @@ const PreviewImage = styled.img`
 
 const PreviewImageContainer = styled.div`
   width: 83vw;
-  overflow: scroll;
-  overflow-y: hidden;
+  /* overflow: scroll; */
+  /* overflow-y: hidden; */
   display: flex;
   row-gap: 1vw;
 `;
@@ -34,15 +37,80 @@ const Error = styled.div`
 `;
 
 const ImageUploadButton = () => {
-  const { previewURL, onChangeFileInput, error } = useUploadContext();
+  const {
+    images,
+    previewURL,
+    onChangeFileInput,
+    error,
+    setImages,
+    setPreviewURL,
+  } = useUploadContext();
+
+  const onEndDrag = (result) => {
+    if (!result.destination) return;
+
+    const tempImages = [...images];
+    const tempPreview = [...previewURL];
+
+    const draggingItemIndex = result.source.index;
+    const afterDragItemIndex = result.destination.index;
+    const removedImages = tempImages.splice(draggingItemIndex, 1);
+    const removedPreviewURL = tempPreview.splice(draggingItemIndex, 1);
+
+    tempImages.splice(afterDragItemIndex, 0, removedImages[0]);
+    tempPreview.splice(afterDragItemIndex, 0, removedPreviewURL[0]);
+
+    console.log(tempImages);
+
+    setImages([...tempImages]);
+    setPreviewURL([...tempPreview]);
+  };
 
   return (
     <Container>
-      <PreviewImageContainer>
-        {previewURL.map((url) => {
-          return <PreviewImage key={url} src={url} alt="preview_image" />;
-        })}
-      </PreviewImageContainer>
+      <DragDropContext onDragEnd={onEndDrag}>
+        <Droppable droppableId="droppableImages" direction="horizontal">
+          {(provided) => {
+            let portal = document.createElement('div');
+            document.body.appendChild(portal);
+            return (
+              <PreviewImageContainer
+                className="droppableImages"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {previewURL.map((previewItem, idx) => {
+                  return (
+                    <Draggable
+                      key={previewItem.id}
+                      draggableId={`dragbleImage_${previewItem.id}`}
+                      index={idx}
+                    >
+                      {(provided, snapshot) => {
+                        let result = (
+                          <PreviewImage
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            src={previewItem.url}
+                            alt="preview_image"
+                          />
+                        );
+
+                        if (snapshot.isDragging) {
+                          return ReactDOM.createPortal(result, portal);
+                        }
+                        return result;
+                      }}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </PreviewImageContainer>
+            );
+          }}
+        </Droppable>
+      </DragDropContext>
       <FileInput
         accept="image/jpg,image/png,image/jpeg,image/gif"
         multiple
