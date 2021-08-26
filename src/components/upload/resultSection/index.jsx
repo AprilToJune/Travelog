@@ -25,11 +25,13 @@ const PreviewImageContainer = styled.div`
 `;
 
 const ResultSection = () => {
-  const { previewURL, title, date, location } = useUploadContext();
+  const { previewURL, title, startFormattedDate, endFormattedDate, location } =
+    useUploadContext();
   return (
     <Container>
       <div>{title}</div>
-      <div>{date}</div>
+      <div>{startFormattedDate}</div>
+      <div>{endFormattedDate}</div>
       <div>{location}</div>
       <PreviewImageContainer>
         {previewURL.map((item) => (

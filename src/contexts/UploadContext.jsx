@@ -1,4 +1,5 @@
 import React, { useContext, createContext, useState, useEffect } from 'react';
+import moment from 'moment';
 
 import ImageUploadSection from 'components/upload/imageUploadSection/';
 import TitleSection from 'components/upload/titleSection/';
@@ -43,10 +44,20 @@ const UploadProvider = ({ children }) => {
 
   const [images, setImages] = useState([]);
   const [title, setTitle] = useState('');
-  const [date, setDate] = useState('');
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [startFormattedDate, setStartFormattedDateDate] = useState(new Date());
+  const [endFormattedDate, setEndFormattedDate] = useState(new Date());
   const [location, setLocation] = useState('');
 
   const [error, setError] = useState('');
+
+  // moment로 formating 하기
+  useEffect(() => {
+    const format = 'YYYY/MM/DD';
+    setStartFormattedDateDate(moment(startDate).format(format));
+    setEndFormattedDate(moment(endDate).format(format));
+  }, [startDate, endDate]);
 
   // step에 따라 보여주는 컴포넌트를 바꿈
   useEffect(() => {
@@ -67,7 +78,7 @@ const UploadProvider = ({ children }) => {
     }
     // date
     if (step === 2) {
-      if (!date) {
+      if (!startDate) {
         setError('날짜는 필수라구?');
         return false;
       }
@@ -142,13 +153,17 @@ const UploadProvider = ({ children }) => {
 
         images,
         title,
-        date,
+        startDate,
+        startFormattedDate,
+        endDate,
+        endFormattedDate,
         location,
         error,
 
         setImages,
         setTitle,
-        setDate,
+        setStartDate,
+        setEndDate,
         setLocation,
 
         setPreviewURL,

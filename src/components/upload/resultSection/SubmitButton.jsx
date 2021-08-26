@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
@@ -15,7 +14,7 @@ const Container = styled(Button)`
 `;
 
 const SubmitButton = () => {
-  const { title, date, location, images } = useUploadContext();
+  const { title, startDate, endDate, location, images } = useUploadContext();
 
   const onClickButton = useCallback(async () => {
     const promises = [];
@@ -23,7 +22,8 @@ const SubmitButton = () => {
     const experienceData = {
       title,
       location,
-      date,
+      startDate,
+      endDate,
       images: [],
     };
 

@@ -1,36 +1,46 @@
 import React from 'react';
 import styled from 'styled-components';
-import TextField from '@material-ui/core/TextField';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { useUploadContext } from 'contexts/UploadContext';
 
 const Container = styled.div`
   position: absolute;
-  width: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 `;
 
-const Input = styled(TextField)``;
+const DateText = styled.div``;
 
 const DateSection = () => {
-  const { date, setDate, error } = useUploadContext();
+  const {
+    startDate,
+    startFormattedDate,
+    endDate,
+    endFormattedDate,
+    setStartDate,
+    setEndDate,
+  } = useUploadContext();
 
-  const onChangeDate = (e) => {
-    setDate(e.target.value);
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
   };
 
   return (
     <Container>
-      <Input
-        error={error.length !== 0}
-        helperText={error}
-        label="시녕아 우리의 여행에 날짜를 붙여줘!"
-        variant="outlined"
-        value={date}
-        onChange={onChangeDate}
-        fullWidth
+      <DateText>{startDate ? startFormattedDate : '없어요'}</DateText>
+      <DateText>{endDate ? endFormattedDate : '없어요'}</DateText>
+      <DatePicker
+        selected={startDate}
+        onChange={onChange}
+        startDate={startDate}
+        endDate={endDate}
+        selectsRange
+        inline
       />
     </Container>
   );
