@@ -32,8 +32,8 @@ const ResultSection = () => {
       <div>{date}</div>
       <div>{location}</div>
       <PreviewImageContainer>
-        {previewURL.map((url) => (
-          <PreviewImage key={url} alt="preview_image" src={url} />
+        {previewURL.map((item) => (
+          <PreviewImage key={item.url} alt="preview_image" src={item.url} />
         ))}
       </PreviewImageContainer>
       <SubmitButton />

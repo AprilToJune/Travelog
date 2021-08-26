@@ -19,6 +19,7 @@ const SubmitButton = () => {
 
   const onClickButton = useCallback(async () => {
     const promises = [];
+    const newURLs = [];
     const experienceData = {
       title,
       location,
@@ -29,10 +30,10 @@ const SubmitButton = () => {
     const collectionRef = firestore.collection('experiences');
     const docRef = await collectionRef.add(experienceData);
 
-    images.forEach((image) => {
+    images.forEach((item, index) => {
       const uploadTask = storage
-        .ref(`images/${docRef.id}/${image.name}`)
-        .put(image);
+        .ref(`images/${docRef.id}/${item.image.name}`)
+        .put(item.image);
 
       promises.push(uploadTask);
 
@@ -48,28 +49,33 @@ const SubmitButton = () => {
           // URL 받아오기
           const url = await storage
             .ref(`images/${docRef.id}`)
-            .child(image.name)
+            .child(item.image.name)
             .getDownloadURL();
 
-          // Document Image 데이터 받아오기
-          const { images } = await firestore
-            .collection('experiences')
-            .doc(docRef.id)
-            .get()
-            .then((doc) => {
-              return doc.data();
-            });
+          // 새로운 데이터
+          const newData = {
+            index,
+            url,
+          };
 
-          // Document Image에 방금 업로드 된 URL 추가
-          collectionRef
-            .doc(docRef.id)
-            .set({ images: [...images, url] }, { merge: true });
+          newURLs.push(newData);
+
+          if (newURLs.length === images.length) {
+            // Document Image에 방금 업로드 된 URL 추가
+            newURLs.sort((a, b) => a.index - b.index);
+
+            collectionRef
+              .doc(docRef.id)
+              .set({ images: newURLs }, { merge: true });
+          }
         },
       );
     });
 
     Promise.all(promises)
-      .then(() => alert('다 됐어요'))
+      .then(() => {
+        alert('다 됐어요');
+      })
       .catch((err) => alert(err));
   }, []);
 

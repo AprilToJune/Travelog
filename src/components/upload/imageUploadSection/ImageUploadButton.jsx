@@ -1,7 +1,8 @@
 /* eslint-disable */
-import React, { useCallback } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
+import Badge from '@material-ui/core/Badge';
 import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd';
 
 import { useUploadContext } from 'contexts/UploadContext';
@@ -23,6 +24,8 @@ const PreviewImage = styled.img`
   height: 20vw;
   object-fit: cover;
 `;
+
+const DraggableContainer = styled.div``;
 
 const PreviewImageContainer = styled.div`
   width: 83vw;
@@ -88,13 +91,18 @@ const ImageUploadButton = () => {
                     >
                       {(provided, snapshot) => {
                         let result = (
-                          <PreviewImage
+                          <Badge
+                            color="primary"
+                            badgeContent={`${idx}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            src={previewItem.url}
-                            alt="preview_image"
-                          />
+                          >
+                            <PreviewImage
+                              src={previewItem.url}
+                              alt="preview_image"
+                            />
+                          </Badge>
                         );
 
                         if (snapshot.isDragging) {
