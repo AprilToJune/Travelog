@@ -5,8 +5,8 @@ import geojson from 'lib/TL_SCCO_SIG.json';
 // import geojson from 'lib/TL_SCCO_CTPRVN.json';
 
 const Container = styled.div`
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   background-color: white;
 `;
 
