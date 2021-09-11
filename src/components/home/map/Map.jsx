@@ -1,11 +1,11 @@
 /* global kakao */ /* eslint-disable */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import geojson12 from 'lib/TL_SCCO_CTPRVN.json';
 
 const Container = styled.div`
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   background-color: white;
 `;
 
@@ -14,21 +14,81 @@ const mapOption = {
   level: 13, // 지도의 확대 레벨
 };
 
+const mapCenter = [
+  ['강원도', 11, 128.32481502321897, 37.80488331383935],
+  ['경기도', 11, 127.10939551302752, 37.572406668451116],
+  ['경상남도', 11, 128.36784396735032, 35.34078921005318],
+  ['경상북도', 11, 128.6902100671252, 36.37366077067553],
+  ['광주', 8, 126.83299766029563, 35.15790543546186],
+  ['대구', 9, 128.55993267501816, 35.80967624691683],
+  ['대전', 9, 127.38570543814956, 36.346354640017324],
+  ['부산', 9, 129.05194055177546, 35.19759612949504],
+  ['서울', 9, 126.98044296615916, 37.55803979640168],
+  ['세종', 9, 127.26207540326605, 36.578252094229235],
+  ['울산', 9, 129.22476602714622, 35.53047430858697],
+  ['인천', 10, 126.42446431505151, 37.51800427453422],
+  ['전라남도', 11, 126.70989589747093, 34.860434760985726],
+  ['전라북도', 10, 127.12624295499178, 35.71042661295992],
+  ['제주도', 10, 126.54177540788722, 33.40915067864407],
+  ['충청남도', 11, 126.88960399724316, 36.51966196080457],
+  ['충청북도', 11, 127.82341585111794, 36.68036947587705],
+];
+
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
   const mapContainer = useRef(null);
   const map = useRef(null);
 
   const [polygons, setPolygons] = useState([]);
-  const [preLevel, setPreLevel] = useState(13);
+  const [customOverlay, setCustomOverlay] = useState([]);
+  const [markers, setMarkers] = useState([]);
 
-  const [places, setPlaces] = useState(['제주특별자치도 제주시 첨단로 242']);
+  const [prePolygonLevel, setPrePolygonLevel] = useState(13);
+  const [preCustomLevel, setPreCustomLevel] = useState(12);
+
+  const [changePlace, setChangePlace] = useState(17);
+
+  const [places, setPlaces] = useState([
+    ['대전 유성구 궁동 490-4'],
+    ['서울 강남구 남부순환로 2609 (도곡동, 하늘빌딩)'],
+    ['제주특별자치도 제주시 첨단로 242'],
+  ]);
+
+  function makeMarkers(places) {
+    const geocoder = new kakao.maps.services.Geocoder();
+    places.forEach((place) => {
+      geocoder.addressSearch(place, function (result, status) {
+        // 정상적으로 검색이 완료됐으면
+        if (status === kakao.maps.services.Status.OK) {
+          const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
+          const marker = new kakao.maps.Marker({
+            position: newPosition,
+          });
+          setMarkers((PreState) => [...PreState, marker]);
+        }
+      });
+    });
+  }
+
+  function makeOverlay() {
+    mapCenter.forEach((center) => {
+      const newPosition = new kakao.maps.LatLng(center[3], center[2]);
+      const customOverlay = new kakao.maps.CustomOverlay({
+        map: map.current,
+        position: newPosition,
+        content:
+          '<div style="background-color: blue; color: white">' + 3 + '</div>',
+      });
+      setCustomOverlay((PreState) => [...PreState, customOverlay]);
+    });
+  }
 
   function makePolygon(geojson) {
     const data = geojson.features;
     let coordi = []; // 좌표 저장 배열
 
-    data.forEach((val) => {
+    //강원도, 경기도, 경상남도, 경상북도, 광주, 대구, 대전, 부산, 서울, 세종, 울산, 인천, 전라남도, 전라북도, 제주도, 충청남도, 충청북도
+    data.forEach((val, idx) => {
       coordi = val.geometry.coordinates;
       const path = [];
       coordi.forEach((item) => {
@@ -40,13 +100,13 @@ const Map = () => {
       });
 
       const polygon = new kakao.maps.Polygon({
-        path, // 그려질 다각형의 좌표 배열입니다
-        strokeWeight: 2, // 선의 두께입니다
-        strokeColor: '#004c80', // 선의 색깔입니다
-        strokeOpacity: 0.8, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-        strokeStyle: 'solid', // 선의 스타일입니다
-        fillColor: '#fff', // 채우기 색깔입니다
-        fillOpacity: 0.7, // 채우기 불투명도 입니다
+        path,
+        strokeWeight: 2,
+        strokeColor: '#004c80',
+        strokeOpacity: 0.5,
+        strokeStyle: 'solid',
+        fillColor: '#fff',
+        fillOpacity: 0.4,
       });
 
       kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
@@ -55,10 +115,20 @@ const Map = () => {
 
       kakao.maps.event.addListener(polygon, 'mouseout', function () {
         polygon.setOptions({ fillColor: '#fff' });
+        customOverlay.forEach((val) => {
+          val.setMap(null);
+        });
       });
 
       kakao.maps.event.addListener(polygon, 'click', function (mouseEvent) {
-        polygon.setOptions({ fillColor: 'red' });
+        var moveCenter = new kakao.maps.LatLng(
+          mapCenter[idx][3],
+          mapCenter[idx][2],
+        );
+        map.current.setCenter(moveCenter);
+        map.current.setLevel(mapCenter[idx][1]);
+
+        setChangePlace(idx);
       });
 
       setPolygons((PreState) => [...PreState, polygon]);
@@ -66,30 +136,32 @@ const Map = () => {
     });
   }
 
-  function makeMarkers(places) {
-    const geocoder = new kakao.maps.services.Geocoder();
-    places.forEach((place) => {
-      geocoder.addressSearch(place, function (result, status) {
-        // 정상적으로 검색이 완료됐으면
-        if (status === kakao.maps.services.Status.OK) {
-          const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
-          new kakao.maps.Marker({
-            map: map.current,
-            position: newPosition,
-          });
-        }
-      });
+  useEffect(() => {
+    markers.forEach((val) => {
+      val.setMap(map.current);
     });
-  }
+  }, [changePlace]);
 
   useEffect(() => {
-    if (preLevel < 12 && 12 <= mapLevel) {
-      setPreLevel(13);
+    if (preCustomLevel == 0 && 12 <= mapLevel) {
+      setPreCustomLevel(12);
+      customOverlay.forEach((val) => {
+        val.setMap(map.current);
+      });
+    } else if (mapLevel < 12 && preCustomLevel == 12) {
+      setPreCustomLevel(0);
+      customOverlay.forEach((val) => {
+        val.setMap(null);
+      });
+    }
+
+    if (prePolygonLevel == 0 && 8 <= mapLevel) {
+      setPrePolygonLevel(13);
       polygons.forEach((val) => {
         val.setMap(map.current);
       });
-    } else if (mapLevel < 12 && 12 <= preLevel) {
-      setPreLevel(0);
+    } else if (mapLevel < 8 && 13 == prePolygonLevel) {
+      setPrePolygonLevel(0);
       polygons.forEach((val) => {
         val.setMap(null);
       });
@@ -98,9 +170,10 @@ const Map = () => {
 
   useEffect(() => {
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
-    makePolygon(geojson12);
-
     makeMarkers(places);
+    console.log('markers', markers);
+    makeOverlay();
+    makePolygon(geojson12);
 
     kakao.maps.event.addListener(map.current, 'zoom_changed', function () {
       const level = map.current.getLevel();
