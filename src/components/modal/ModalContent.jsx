@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Slider from "react-slick";
@@ -74,9 +73,6 @@ const Location = styled.span`
 const Slash = styled.span`
   font-size: 16px;
   color: rgba(255, 255, 255, 0.5);
-`;
-
-const ImageContainer = styled.div`
 `;
 
 const LeftArrowContainerWithIcon = styled.div`
