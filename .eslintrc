@@ -7,8 +7,11 @@
     "react/prefer-stateless-function": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-one-expression-per-line": 0,
-    "import/no-unresolved": "off"
-    //[ "error", { "caseSensitive": false }] 
+    "react/prop-types": 0,
+    "import/no-unresolved": [
+      "error",
+      { "caseSensitive": false }
+    ] 
   },
   "env": {
     "browser": true
