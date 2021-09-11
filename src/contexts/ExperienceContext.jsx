@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useContext, createContext, useState, useEffect } from 'react';
+import React, { useContext, createContext, useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { firestore } from '../firebaseInit';
 
@@ -7,6 +7,16 @@ const ExperienceContext = createContext({});
 
 const ExperienceProvider = ({ children }) => {
   const [experiences, setExperiences] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentModalContent, setCurrentModalContent] = useState({});
+
+  const handleModalOpen = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -31,6 +41,12 @@ const ExperienceProvider = ({ children }) => {
     <ExperienceContext.Provider
       value={{
         experiences,
+        isModalOpen,
+        currentModalContent,
+
+        handleModalOpen,
+        handleModalClose,
+        setCurrentModalContent,
       }}
     >
       {children}

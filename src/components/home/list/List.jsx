@@ -1,10 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
+import { useExperienceContext } from 'contexts/ExperienceContext';
+
 const Container = styled.div`
   position: relative;
   width: 100%;
   height: 20%;
+
+  :hover {
+    cursor: pointer;
+  }
 `;
 
 const Background = styled.img`
@@ -17,11 +23,13 @@ const Background = styled.img`
 `;
 
 const Title = styled.div`
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
   position: absolute;
   font-weight: bold;
   top: 0;
   left: 0;
-  padding: 10px;
+  padding: 5px;
 `;
 
 const Description = styled.div`
@@ -38,12 +46,12 @@ const Description = styled.div`
 `;
 
 const DateText = styled.span`
-color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
 `;
 
 const LocationText = styled.span`
-color: rgba(255, 255, 255, 1);
+  color: rgba(255, 255, 255, 1);
   font-size: 20px;
 `;
 
@@ -54,6 +62,7 @@ const AllImageText = styled.span`
 
 const List = ({ id, title, startDate, endDate, location, images }) => {
   const [isHover, setIsHover] = useState(false);
+  const { handleModalOpen, setCurrentModalContent } = useExperienceContext(); 
 
   const onMouseEnterContainer = useCallback(() => {
     setIsHover(true);
@@ -62,6 +71,19 @@ const List = ({ id, title, startDate, endDate, location, images }) => {
   const onMouseLeaveContainer = useCallback(() => {
     setIsHover(false);
   }, []);
+
+  const customHandleModalOpen = useCallback(() => {
+    setCurrentModalContent({
+      id,
+      title,
+      startDate,
+      endDate,
+      location,
+      images,
+    });
+    setIsHover(false);
+    handleModalOpen();
+  }, [handleModalOpen]);
 
   const DescriptionContent = () => {
     const splittedLocation = location.split(' ');
@@ -82,13 +104,12 @@ const List = ({ id, title, startDate, endDate, location, images }) => {
 
   return (
     <Container
-      id={id}
+      onClick={customHandleModalOpen}
       onMouseEnter={onMouseEnterContainer}
       onMouseLeave={onMouseLeaveContainer}
     >
       <Background src={images[0].url} draggable={false} />
       <Title>{title}</Title>
-
       {isHover ? <DescriptionContent /> : ''}
     </Container>
   )

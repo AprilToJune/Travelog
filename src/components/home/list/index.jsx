@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import List from 'components/home/list/List';
+import Modal from 'components/modal';
 import { useExperienceContext } from 'contexts/ExperienceContext';
 
 const Container = styled.div`
@@ -40,6 +41,7 @@ const ExperienceListContainer = () => {
             />
           )
         })}
+        <Modal />
       </ListContainer>
     </Container>
   );
