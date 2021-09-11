@@ -13,7 +13,7 @@ const Container = styled.div`
 const PreviewImage = styled.img`
   width: 20vw;
   height: 20vw;
-  object-fit: cover;
+  object-fit: contain;
 `;
 
 const PreviewImageContainer = styled.div`
@@ -29,10 +29,10 @@ const ResultSection = () => {
     useUploadContext();
   return (
     <Container>
-      <div>{title}</div>
-      <div>{startFormattedDate}</div>
-      <div>{endFormattedDate}</div>
-      <div>{location}</div>
+      <div>타이틀: {title}</div>
+      <div>여행 시작 날짜: {startFormattedDate}</div>
+      <div>여행 종료 날짜: {endFormattedDate}</div>
+      <div>여행 위치: {location}</div>
       <PreviewImageContainer>
         {previewURL.map((item) => (
           <PreviewImage key={item.url} alt="preview_image" src={item.url} />

@@ -22,15 +22,11 @@ const FileInput = styled.input`
 const PreviewImage = styled.img`
   width: 20vw;
   height: 20vw;
-  object-fit: cover;
+  object-fit: contain;
 `;
-
-const DraggableContainer = styled.div``;
 
 const PreviewImageContainer = styled.div`
   width: 83vw;
-  /* overflow: scroll; */
-  /* overflow-y: hidden; */
   display: flex;
   row-gap: 1vw;
 `;

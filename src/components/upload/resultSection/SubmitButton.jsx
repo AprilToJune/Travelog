@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
+import { useHistory } from "react-router-dom";
 
 import { storage, firestore } from 'firebaseInit';
 import { useUploadContext } from 'contexts/UploadContext';
@@ -15,6 +16,7 @@ const Container = styled(Button)`
 
 const SubmitButton = () => {
   const { title, startDate, endDate, location, images } = useUploadContext();
+  const history = useHistory();
 
   const onClickButton = useCallback(async () => {
     const promises = [];
@@ -74,7 +76,8 @@ const SubmitButton = () => {
 
     Promise.all(promises)
       .then(() => {
-        alert('다 됐어요');
+        console.log('업로드 완료!');
+        history.replace('/');
       })
       .catch((err) => alert(err));
   }, []);
