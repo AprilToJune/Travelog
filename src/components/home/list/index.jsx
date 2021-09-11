@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import List from 'components/home/list/List';
+import { useExperienceContext } from 'contexts/ExperienceContext';
 
 const Container = styled.div`
   position: relative;
@@ -27,22 +28,39 @@ const ListContainer = styled.div`
   overflow: scroll;
 `;
 
-const index = () => (
-  <Container>
-    <Text>리스트 컨테이너</Text>
-    <ListContainer>
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-      <List />
-    </ListContainer>
-  </Container>
-);
+const ExperienceListContainer = () => {
+  const { experiences } = useExperienceContext();
+  return (
+    <Container>
+      <Text>리스트 컨테이너</Text>
+      <ListContainer>
+        {experiences.map((experience) => {
+          const { id, title, startDate, endDate, location, images } = experience;
+          return (
+            <List
+              key={id}
+              id={id}
+              title={title}
+              startDate={startDate}
+              endDate={endDate}
+              location={location}
+              images={images}
+            />
+          )
+        })}
+        {/* <List />
+        <List />
+        <List />
+        <List />
+        <List />
+        <List />
+        <List />
+        <List />
+        <List />
+        <List /> */}
+      </ListContainer>
+    </Container>
+  );
+}
 
-export default index;
+export default ExperienceListContainer;

@@ -5,15 +5,18 @@ import { resetServerContext } from 'react-beautiful-dnd';
 
 import './index.css';
 import UploadProvider from 'contexts/UploadContext';
+import ExperienceProvider from 'contexts/ExperienceContext';
 import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <UploadProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </UploadProvider>
+    <ExperienceProvider>
+      <UploadProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </UploadProvider>
+    </ExperienceProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

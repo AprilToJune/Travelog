@@ -76,7 +76,7 @@ const SubmitButton = () => {
 
     Promise.all(promises)
       .then(() => {
-        console.log('업로드 완료!');
+        alert('업로드 완료!');
         history.replace('/');
       })
       .catch((err) => alert(err));
