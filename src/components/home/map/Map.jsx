@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import styled from 'styled-components';
 import geojson12 from 'lib/TL_SCCO_CTPRVN.json';
+import { useExperienceContext } from 'contexts/ExperienceContext';
 
 const Container = styled.div`
   width: 100%;
@@ -15,10 +16,10 @@ const mapOption = {
 };
 
 const mapCenter = [
-  ['강원도', 11, 128.32481502321897, 37.80488331383935],
-  ['경기도', 11, 127.10939551302752, 37.572406668451116],
-  ['경상남도', 11, 128.36784396735032, 35.34078921005318],
-  ['경상북도', 11, 128.6902100671252, 36.37366077067553],
+  ['강원', 11, 128.32481502321897, 37.80488331383935],
+  ['경기', 11, 127.10939551302752, 37.572406668451116],
+  ['경남', 11, 128.36784396735032, 35.34078921005318],
+  ['경북', 11, 128.6902100671252, 36.37366077067553],
   ['광주', 8, 126.83299766029563, 35.15790543546186],
   ['대구', 9, 128.55993267501816, 35.80967624691683],
   ['대전', 9, 127.38570543814956, 36.346354640017324],
@@ -27,15 +28,16 @@ const mapCenter = [
   ['세종', 9, 127.26207540326605, 36.578252094229235],
   ['울산', 9, 129.22476602714622, 35.53047430858697],
   ['인천', 10, 126.42446431505151, 37.51800427453422],
-  ['전라남도', 11, 126.70989589747093, 34.860434760985726],
-  ['전라북도', 10, 127.12624295499178, 35.71042661295992],
-  ['제주도', 10, 126.54177540788722, 33.40915067864407],
-  ['충청남도', 11, 126.88960399724316, 36.51966196080457],
-  ['충청북도', 11, 127.82341585111794, 36.68036947587705],
+  ['전남', 11, 126.70989589747093, 34.860434760985726],
+  ['전북', 10, 127.12624295499178, 35.71042661295992],
+  ['제주', 10, 126.54177540788722, 33.40915067864407],
+  ['충남', 11, 126.88960399724316, 36.51966196080457],
+  ['충북', 11, 127.82341585111794, 36.68036947587705],
 ];
 
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
+  const { experiences } = useExperienceContext();
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -47,28 +49,6 @@ const Map = () => {
   const [preCustomLevel, setPreCustomLevel] = useState(12);
 
   const [changePlace, setChangePlace] = useState(17);
-
-  const [places, setPlaces] = useState([
-    ['대전 유성구 궁동 490-4'],
-    ['서울 강남구 남부순환로 2609 (도곡동, 하늘빌딩)'],
-    ['제주특별자치도 제주시 첨단로 242'],
-  ]);
-
-  function makeMarkers(places) {
-    const geocoder = new kakao.maps.services.Geocoder();
-    places.forEach((place) => {
-      geocoder.addressSearch(place, function (result, status) {
-        // 정상적으로 검색이 완료됐으면
-        if (status === kakao.maps.services.Status.OK) {
-          const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
-          const marker = new kakao.maps.Marker({
-            position: newPosition,
-          });
-          setMarkers((PreState) => [...PreState, marker]);
-        }
-      });
-    });
-  }
 
   function makeOverlay() {
     mapCenter.forEach((center) => {
@@ -138,7 +118,27 @@ const Map = () => {
 
   useEffect(() => {
     markers.forEach((val) => {
-      val.setMap(map.current);
+      val.setMap(null);
+    });
+    setMarkers([]);
+    const geocoder = new kakao.maps.services.Geocoder();
+    experiences.forEach((exp) => {
+      const dis = exp.location.split(' ')[0];
+      if (mapCenter[changePlace][0] == dis) {
+        geocoder.addressSearch(exp.location, function (result, status) {
+          // 정상적으로 검색이 완료됐으면
+          if (status === kakao.maps.services.Status.OK) {
+            const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
+            const marker = new kakao.maps.Marker({
+              map: map.current,
+              position: newPosition,
+              title: exp.id,
+            });
+            setMarkers((PreState) => [...PreState, marker]);
+            console.log('마커 id 가져옴', marker.Fb);
+          }
+        });
+      }
     });
   }, [changePlace]);
 
@@ -170,8 +170,6 @@ const Map = () => {
 
   useEffect(() => {
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
-    makeMarkers(places);
-    console.log('markers', markers);
     makeOverlay();
     makePolygon(geojson12);
 

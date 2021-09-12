@@ -1,5 +1,11 @@
 /* eslint-disable */
-import React, { useContext, createContext, useState, useEffect, useCallback } from 'react';
+import React, {
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import moment from 'moment';
 import { firestore } from '../firebaseInit';
 
@@ -28,11 +34,14 @@ const ExperienceProvider = ({ children }) => {
           id: doc.id,
           title: data.title,
           location: data.location,
-          startDate: moment.unix(data.startDate.seconds).format('YYYY년 MM월 DD일'),
+          startDate: moment
+            .unix(data.startDate.seconds)
+            .format('YYYY년 MM월 DD일'),
           endDate: moment.unix(data.endDate.seconds).format('YYYY년 MM월 DD일'),
           images: data.images,
-        }
+        };
         setExperiences((prevState) => [...prevState, exp]);
+        console.log(exp);
       });
     })();
   }, []);
