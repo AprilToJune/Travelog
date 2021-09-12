@@ -11,33 +11,33 @@ import { firestore } from '../firebaseInit';
 
 const ExperienceContext = createContext({});
 
+const MapLocationCount = [
+  { location: '강원', count: 0 },
+  { location: '경기', count: 0 },
+  { location: '경남', count: 0 },
+  { location: '경북', count: 0 },
+  { location: '광주', count: 0 },
+  { location: '대구', count: 0 },
+  { location: '대전', count: 0 },
+  { location: '부산', count: 0 },
+  { location: '서울', count: 0 },
+  { location: '세종', count: 0 },
+  { location: '울산', count: 0 },
+  { location: '인천', count: 0 },
+  { location: '전남', count: 0 },
+  { location: '전북', count: 0 },
+  { location: '제주', count: 0 },
+  { location: '충남', count: 0 },
+  { location: '충북', count: 0 },
+];
+
 const ExperienceProvider = ({ children }) => {
   const [experiences, setExperiences] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentModalContent, setCurrentModalContent] = useState({});
 
-  const count = new Array(17).fill(0);
-  const [countExps, setCountExps] = useState([]);
-  const mapCenter = [
-    '강원',
-    '경기',
-    '경남',
-    '경북',
-    '광주',
-    '대구',
-    '대전',
-    '부산',
-    '서울',
-    '세종',
-    '울산',
-    '인천',
-    '전남',
-    '전북',
-    '제주',
-    '충남',
-    '충북',
-  ];
-
+  const [mapLocationCount, setMapLocationCount] = useState(MapLocationCount);
+ 
   const handleModalOpen = useCallback(() => {
     setIsModalOpen(true);
   }, []);
@@ -63,17 +63,13 @@ const ExperienceProvider = ({ children }) => {
       };
 
       const dis = data.location.split(' ')[0];
-      mapCenter.forEach((val, idx) => {
-        if (val === dis) {
-          count[idx] += 1;
+      mapLocationCount.forEach((val) => {
+        if (val.location === dis) {
+          val.count += 1;
+          setMapLocationCount(val);
         }
       });
-
       setExperiences((prevState) => [...prevState, exp]);
-    });
-
-    count.map((val) => {
-      setCountExps((prevState) => [...prevState, val]);
     });
   };
 
@@ -87,7 +83,7 @@ const ExperienceProvider = ({ children }) => {
         experiences,
         isModalOpen,
         currentModalContent,
-        countExps,
+        mapLocationCount,
 
         handleModalOpen,
         handleModalClose,

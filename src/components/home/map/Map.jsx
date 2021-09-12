@@ -37,7 +37,7 @@ const mapCenter = [
 
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
-  const { experiences, countExps } = useExperienceContext();
+  const { experiences, mapLocationCount } = useExperienceContext();
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -56,7 +56,7 @@ const Map = () => {
       const customOverlay = new kakao.maps.CustomOverlay({
         map: map.current,
         position: newPosition,
-        content: countExps,
+        content: `<div>${mapLocationCount[idx].count}</div>`,
       });
 
       setCustomOverlay((PreState) => [...PreState, customOverlay]);
@@ -175,6 +175,7 @@ const Map = () => {
   }, [mapLevel]);
 
   useEffect(() => {
+    console.log('mapLocationCount', mapLocationCount);
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
     makeOverlay();
     makePolygon(geojson12);
