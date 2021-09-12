@@ -66,6 +66,21 @@ const UploadProvider = ({ children }) => {
     });
   }, [step]);
 
+  /* 업로드 완료시 데이터 초기화 */
+  const resetUploadDate = () => {
+    SetCurrentSection(<TitleSection />);
+    setStep(1);
+    setPreviewURL([]);
+    setImages([]);
+    setTitle('');
+    setStartDate();
+    setEndDate();
+    setStartFormattedDateDate();
+    setEndFormattedDate();
+    setLocation('');
+    setError('');
+  }
+
   const validation = () => {
     // title
     if (step === 1) {
@@ -171,6 +186,7 @@ const UploadProvider = ({ children }) => {
         onChangeFileInput,
         onClickBeforeStep,
         onClickNextStep,
+        resetUploadDate,
       }}
     >
       {children}
