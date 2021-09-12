@@ -38,7 +38,7 @@ const ExperienceProvider = ({ children }) => {
   const [dataLoading, setDataLoading] = useState(false);
 
   const [mapLocationCount, setMapLocationCount] = useState([]);
- 
+
   const handleModalOpen = useCallback(() => {
     setIsModalOpen(true);
   }, []);
@@ -76,7 +76,7 @@ const ExperienceProvider = ({ children }) => {
       });
       setExperiences((prevState) => [...prevState, exp]);
     });
-  
+
     Promise.all(promises)
       .then(() => {
         console.log('다 가져옴');

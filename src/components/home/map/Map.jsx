@@ -84,14 +84,17 @@ const Map = () => {
           const tempCustomOverlay = new kakao.maps.CustomOverlay({
             map: map.current,
             position: newPosition,
-            content: `<div>${val.count}</div>`,
+            content:
+              `<div style="height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;">` +
+              val.count +
+              '</div>',
           });
 
           setCustomOverlay((PreState) => [...PreState, tempCustomOverlay]);
         }
-      })
+      });
     });
-  }, [dataLoading])
+  }, [dataLoading]);
 
   function makePolygon(geojson) {
     const data = geojson.features;
