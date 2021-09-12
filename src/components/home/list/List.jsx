@@ -108,7 +108,7 @@ const List = ({ id, title, startDate, endDate, location, images }) => {
       onMouseEnter={onMouseEnterContainer}
       onMouseLeave={onMouseLeaveContainer}
     >
-      <Background src={images[0].url} draggable={false} />
+      <Background src={images[0]?.url} draggable={false} />
       <Title>{title}</Title>
       {isHover ? <DescriptionContent /> : ''}
     </Container>

@@ -64,7 +64,7 @@ const SubmitButton = () => {
 
     images.forEach((item, index) => {
       const uploadTask = storage
-        .ref(`images/${docRef.id}/${item.image.name}`)
+        .ref(`images/${docRef.id}.${title}/${item.image.name}`)
         .put(item.image);
 
       promises.push(uploadTask);
@@ -83,7 +83,7 @@ const SubmitButton = () => {
         async () => {
           // URL 받아오기
           const url = await storage
-            .ref(`images/${docRef.id}`)
+            .ref(`images/${docRef.id}.${title}`)
             .child(item.image.name)
             .getDownloadURL();
 
