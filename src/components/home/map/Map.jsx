@@ -37,7 +37,7 @@ const mapCenter = [
 
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
-  const { experiences } = useExperienceContext();
+  const { experiences, countExps } = useExperienceContext();
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -51,14 +51,14 @@ const Map = () => {
   const [changePlace, setChangePlace] = useState(17);
 
   function makeOverlay() {
-    mapCenter.forEach((center) => {
+    mapCenter.forEach((center, idx) => {
       const newPosition = new kakao.maps.LatLng(center[3], center[2]);
       const customOverlay = new kakao.maps.CustomOverlay({
         map: map.current,
         position: newPosition,
-        content:
-          '<div style="background-color: blue; color: white">' + 3 + '</div>',
+        content: countExps,
       });
+
       setCustomOverlay((PreState) => [...PreState, customOverlay]);
     });
   }
@@ -143,8 +143,14 @@ const Map = () => {
   }, [changePlace]);
 
   useEffect(() => {
-    if (preCustomLevel == 0 && 12 <= mapLevel) {
+    if (preCustomLevel == 0 && 12 == mapLevel) {
       setPreCustomLevel(12);
+
+      if (markers.length) {
+        markers.forEach((val) => {
+          val.setMap(null);
+        });
+      }
       customOverlay.forEach((val) => {
         val.setMap(map.current);
       });

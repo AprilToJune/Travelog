@@ -16,6 +16,28 @@ const ExperienceProvider = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentModalContent, setCurrentModalContent] = useState({});
 
+  const count = new Array(17).fill(0);
+  const [countExps, setCountExps] = useState([]);
+  const mapCenter = [
+    '강원',
+    '경기',
+    '경남',
+    '경북',
+    '광주',
+    '대구',
+    '대전',
+    '부산',
+    '서울',
+    '세종',
+    '울산',
+    '인천',
+    '전남',
+    '전북',
+    '제주',
+    '충남',
+    '충북',
+  ];
+
   const handleModalOpen = useCallback(() => {
     setIsModalOpen(true);
   }, []);
@@ -40,8 +62,19 @@ const ExperienceProvider = ({ children }) => {
           endDate: moment.unix(data.endDate.seconds).format('YYYY년 MM월 DD일'),
           images: data.images,
         };
+
+        const dis = data.location.split(' ')[0];
+        mapCenter.forEach((val, idx) => {
+          if (val === dis) {
+            count[idx] += 1;
+          }
+        });
+
         setExperiences((prevState) => [...prevState, exp]);
-        console.log(exp);
+      });
+
+      count.map((val) => {
+        setCountExps((prevState) => [...prevState, val]);
       });
     })();
   }, []);
@@ -52,6 +85,7 @@ const ExperienceProvider = ({ children }) => {
         experiences,
         isModalOpen,
         currentModalContent,
+        countExps,
 
         handleModalOpen,
         handleModalClose,
