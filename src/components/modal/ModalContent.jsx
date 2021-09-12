@@ -14,14 +14,16 @@ const Container = styled.div`
   width: 100vw;
   z-index: 10;
 
-  .slider img {
-    object-fit: cover;
-  }
-
   .slick-track {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .slick-slide div img {
+    width: 100vw;
+    height: 80vh;
+    object-fit: contain;
   }
 `;
 
@@ -160,7 +162,12 @@ const ModalContent = () => {
       <Container>
         {/* eslint-disable-next-line */}
         <Slider {...settings}>
-          {images.map((image) => <img key={image.index} src={image.url} alt="my-experiences" />)}
+          {images.map((image) => (
+              <div key={image.index}>
+                <img src={image.url} alt="my-experiences" />
+              </div>
+            ),
+          )}
         </Slider>
       </Container>
     </>

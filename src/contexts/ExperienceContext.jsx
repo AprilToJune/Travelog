@@ -46,37 +46,39 @@ const ExperienceProvider = ({ children }) => {
     setIsModalOpen(false);
   }, []);
 
+  const getExperiences = async () => {
+    const collectionRef = await firestore.collection('experiences').get();
+    const docRef = collectionRef.docs;
+    docRef.forEach((doc) => {
+      const data = doc.data();
+      const exp = {
+        id: doc.id,
+        title: data.title,
+        location: data.location,
+        startDate: moment
+          .unix(data.startDate.seconds)
+          .format('YYYY년 MM월 DD일'),
+        endDate: moment.unix(data.endDate.seconds).format('YYYY년 MM월 DD일'),
+        images: data.images,
+      };
+
+      const dis = data.location.split(' ')[0];
+      mapCenter.forEach((val, idx) => {
+        if (val === dis) {
+          count[idx] += 1;
+        }
+      });
+
+      setExperiences((prevState) => [...prevState, exp]);
+    });
+
+    count.map((val) => {
+      setCountExps((prevState) => [...prevState, val]);
+    });
+  };
+
   useEffect(() => {
-    (async () => {
-      const collectionRef = await firestore.collection('experiences').get();
-      const docRef = collectionRef.docs;
-      docRef.forEach((doc) => {
-        const data = doc.data();
-        const exp = {
-          id: doc.id,
-          title: data.title,
-          location: data.location,
-          startDate: moment
-            .unix(data.startDate.seconds)
-            .format('YYYY년 MM월 DD일'),
-          endDate: moment.unix(data.endDate.seconds).format('YYYY년 MM월 DD일'),
-          images: data.images,
-        };
-
-        const dis = data.location.split(' ')[0];
-        mapCenter.forEach((val, idx) => {
-          if (val === dis) {
-            count[idx] += 1;
-          }
-        });
-
-        setExperiences((prevState) => [...prevState, exp]);
-      });
-
-      count.map((val) => {
-        setCountExps((prevState) => [...prevState, val]);
-      });
-    })();
+    getExperiences();
   }, []);
 
   return (
@@ -90,6 +92,7 @@ const ExperienceProvider = ({ children }) => {
         handleModalOpen,
         handleModalClose,
         setCurrentModalContent,
+        getExperiences,
       }}
     >
       {children}
