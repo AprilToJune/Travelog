@@ -28,6 +28,8 @@ const PreviewImage = styled.img`
 const PreviewImageContainer = styled.div`
   width: 83vw;
   display: flex;
+  overflow: scroll;
+  overflow-y: hidden;
   row-gap: 1vw;
 `;
 
@@ -88,7 +90,8 @@ const ImageUploadButton = () => {
                       {(provided, snapshot) => {
                         let result = (
                           <Badge
-                            color="primary"
+                            overlap="circular"
+                            color={idx === 0 ? 'secondary' : 'primary'}
                             badgeContent={idx === 0 ? 'title' : `${idx + 1}`}
                             ref={provided.innerRef}
                             {...provided.draggableProps}
