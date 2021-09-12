@@ -81,13 +81,14 @@ const Map = () => {
         if (center[0] === val.location) {
           const newPosition = new kakao.maps.LatLng(center[3], center[2]);
 
+          const content = `<div style="height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;">`
+          + val.count
+          + '</div>';
+        
           const tempCustomOverlay = new kakao.maps.CustomOverlay({
             map: map.current,
             position: newPosition,
-            content:
-              `<div style="height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;">` +
-              val.count +
-              '</div>',
+            content,
           });
 
           setCustomOverlay((PreState) => [...PreState, tempCustomOverlay]);
