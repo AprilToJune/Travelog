@@ -68,12 +68,15 @@ const UploadProvider = ({ children }) => {
 
   /* 업로드 완료시 데이터 초기화 */
   const resetUploadDate = () => {
+    SetCurrentSection(<TitleSection />);
+    setStep(1);
+    setPreviewURL([]);
     setImages([]);
     setTitle('');
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setStartFormattedDateDate(new Date());
-    setEndFormattedDate(new Date());
+    setStartDate();
+    setEndDate();
+    setStartFormattedDateDate();
+    setEndFormattedDate();
     setLocation('');
     setError('');
   }

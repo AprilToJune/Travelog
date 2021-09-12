@@ -4,10 +4,7 @@ import { useUploadContext } from 'contexts/UploadContext';
 import SubmitButton from 'components/upload/resultSection/SubmitButton';
 
 const Container = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
 `;
 
 const PreviewImage = styled.img`
