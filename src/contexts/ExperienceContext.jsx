@@ -35,8 +35,9 @@ const ExperienceProvider = ({ children }) => {
   const [experiences, setExperiences] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentModalContent, setCurrentModalContent] = useState({});
+  const [dataLoading, setDataLoading] = useState(false);
 
-  const [mapLocationCount, setMapLocationCount] = useState(MapLocationCount);
+  const [mapLocationCount, setMapLocationCount] = useState([]);
  
   const handleModalOpen = useCallback(() => {
     setIsModalOpen(true);
@@ -47,10 +48,14 @@ const ExperienceProvider = ({ children }) => {
   }, []);
 
   const getExperiences = async () => {
+    setDataLoading(true);
     const collectionRef = await firestore.collection('experiences').get();
     const docRef = collectionRef.docs;
+    const promises = [];
+
     docRef.forEach((doc) => {
       const data = doc.data();
+      promises.push(data);
       const exp = {
         id: doc.id,
         title: data.title,
@@ -63,14 +68,21 @@ const ExperienceProvider = ({ children }) => {
       };
 
       const dis = data.location.split(' ')[0];
-      mapLocationCount.forEach((val) => {
+      MapLocationCount.forEach((val) => {
         if (val.location === dis) {
           val.count += 1;
-          setMapLocationCount(val);
+          setMapLocationCount((prevState) => [...prevState, val]);
         }
       });
       setExperiences((prevState) => [...prevState, exp]);
     });
+  
+    Promise.all(promises)
+      .then(() => {
+        console.log('다 가져옴');
+        setDataLoading(false);
+      })
+      .catch((err) => alert(err));
   };
 
   useEffect(() => {
@@ -84,6 +96,7 @@ const ExperienceProvider = ({ children }) => {
         isModalOpen,
         currentModalContent,
         mapLocationCount,
+        dataLoading,
 
         handleModalOpen,
         handleModalClose,

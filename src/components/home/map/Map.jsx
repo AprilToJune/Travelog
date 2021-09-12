@@ -37,7 +37,7 @@ const mapCenter = [
 
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
-  const { experiences, mapLocationCount } = useExperienceContext();
+  const { experiences, mapLocationCount, dataLoading } = useExperienceContext();
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -50,18 +50,48 @@ const Map = () => {
 
   const [changePlace, setChangePlace] = useState(17);
 
-  function makeOverlay() {
-    mapCenter.forEach((center, idx) => {
-      const newPosition = new kakao.maps.LatLng(center[3], center[2]);
-      const customOverlay = new kakao.maps.CustomOverlay({
-        map: map.current,
-        position: newPosition,
-        content: `<div>${mapLocationCount[idx].count}</div>`,
-      });
+  // mapLocationCount가 바뀔 때 마다 실행
+  // mapLocationCount = [
+  //     {
+  //       "location": "경기",
+  //       "count": 1
+  //   },
+  //   {
+  //       "location": "충남",
+  //       "count": 2
+  //   },
+  //   {
+  //       "location": "대전",
+  //       "count": 1
+  //   },
+  //   {
+  //       "location": "대구",
+  //       "count": 1
+  //   },
+  //   {
+  //       "location": "충남",
+  //       "count": 2
+  //   }
+  // ]
+  useEffect(() => {
+    // mapCenter를 돌면서 LatLng가 같은 곳을 찾음
+    mapCenter.forEach((center) => {
+      mapLocationCount.forEach((val) => {
+        // "경기"  ===  "경기"
+        if (center[0] === val.location) {
+          const newPosition = new kakao.maps.LatLng(center[3], center[2]);
 
-      setCustomOverlay((PreState) => [...PreState, customOverlay]);
+          const tempCustomOverlay = new kakao.maps.CustomOverlay({
+            map: map.current,
+            position: newPosition,
+            content: `<div>${val.count}</div>`,
+          });
+
+          setCustomOverlay((PreState) => [...PreState, tempCustomOverlay]);
+        }
+      })
     });
-  }
+  }, [dataLoading])
 
   function makePolygon(geojson) {
     const data = geojson.features;
@@ -177,7 +207,7 @@ const Map = () => {
   useEffect(() => {
     console.log('mapLocationCount', mapLocationCount);
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
-    makeOverlay();
+    // makeOverlay();
     makePolygon(geojson12);
 
     kakao.maps.event.addListener(map.current, 'zoom_changed', function () {
@@ -185,6 +215,20 @@ const Map = () => {
       setMapLevel(level);
     });
   }, []);
+
+  // const makeOverlay = useCallback(() => {
+  //   mapCenter.forEach((center, idx) => {
+  //     const newPosition = new kakao.maps.LatLng(center[3], center[2]);
+  //     console.log('mapLocationCount[idx]', mapLocationCount[idx]);
+  //     const customOverlay = new kakao.maps.CustomOverlay({
+  //       map: map.current,
+  //       position: newPosition,
+  //       content: `<div>${mapLocationCount[idx].count}</div>`,
+  //     });
+
+  //     setCustomOverlay((PreState) => [...PreState, customOverlay]);
+  //   });
+  // }, [mapLocationCount])
 
   return (
     <Container>
