@@ -15,7 +15,7 @@ const Container = styled(Button)`
 `;
 
 const SubmitButton = () => {
-  const { title, startDate, endDate, location, images } = useUploadContext();
+  const { title, startDate, endDate, location, images, resetUploadDate } = useUploadContext();
   const history = useHistory();
 
   const onClickButton = useCallback(async () => {
@@ -77,6 +77,7 @@ const SubmitButton = () => {
     Promise.all(promises)
       .then(() => {
         alert('업로드 완료!');
+        resetUploadDate();
         history.replace('/');
       })
       .catch((err) => alert(err));

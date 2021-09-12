@@ -16,11 +16,28 @@ const PreviewImage = styled.img`
   object-fit: contain;
 `;
 
+const IndexOfImage = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 50%;
+  color: black;
+  font-size: 32px;
+  font-weight: bold;
+`;
+
 const PreviewImageContainer = styled.div`
-  width: 83vw;
+  position: relative;
+`;
+
+const PreviewImageListContainer = styled.div`
+  position: relative;
+  display: flex;
   overflow: scroll;
   overflow-y: hidden;
-  display: flex;
+  width: 83vw;
   row-gap: 1vw;
 `;
 
@@ -33,11 +50,16 @@ const ResultSection = () => {
       <div>여행 시작 날짜: {startFormattedDate}</div>
       <div>여행 종료 날짜: {endFormattedDate}</div>
       <div>여행 위치: {location}</div>
-      <PreviewImageContainer>
-        {previewURL.map((item) => (
-          <PreviewImage key={item.url} alt="preview_image" src={item.url} />
+      <PreviewImageListContainer>
+        {previewURL.map((item, index) => (
+          <PreviewImageContainer key={item.url}>
+            <IndexOfImage>
+              {index}
+            </IndexOfImage>
+            <PreviewImage alt="preview_image" src={item.url} />
+          </PreviewImageContainer>
         ))}
-      </PreviewImageContainer>
+      </PreviewImageListContainer>
       <SubmitButton />
     </Container>
   );
