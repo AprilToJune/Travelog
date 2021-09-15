@@ -2,11 +2,12 @@ import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { useExperienceContext } from 'contexts/ExperienceContext';
+import heart from 'assets/heart.png';
 
 const Container = styled.div`
   position: relative;
   width: 100%;
-  height: 20%;
+  height: 30%;
 
   :hover {
     cursor: pointer;
@@ -22,14 +23,13 @@ const Background = styled.img`
   left: 0;
 `;
 
-const Title = styled.div`
-  color: white;
-  background-color: rgba(0, 0, 0, 0.5);
+const HeartImage = styled.img`
   position: absolute;
-  font-weight: bold;
   top: 0;
   left: 0;
   padding: 5px;
+  width: 40px;
+  height: 40px;
 `;
 
 const Description = styled.div`
@@ -50,19 +50,19 @@ const DateText = styled.span`
   font-size: 14px;
 `;
 
-const LocationText = styled.span`
+const TitleText = styled.span`
   color: rgba(255, 255, 255, 1);
   font-size: 20px;
 `;
 
 const AllImageText = styled.span`
-  color: rgba(255, 255, 255,0.4);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 12px;
 `;
 
 const List = ({ id, title, startDate, endDate, location, images }) => {
   const [isHover, setIsHover] = useState(false);
-  const { handleModalOpen, setCurrentModalContent } = useExperienceContext(); 
+  const { handleModalOpen, setCurrentModalContent } = useExperienceContext();
 
   const onMouseEnterContainer = useCallback(() => {
     setIsHover(true);
@@ -85,22 +85,15 @@ const List = ({ id, title, startDate, endDate, location, images }) => {
     handleModalOpen();
   }, [handleModalOpen]);
 
-  const DescriptionContent = () => {
-    const splittedLocation = location.split(' ');
-    return (
-      <Description>
-        <DateText>
-          {startDate} - {endDate}
-        </DateText>
-        <LocationText>
-          {splittedLocation[0]} {splittedLocation[1]}
-        </LocationText>
-        <AllImageText>
-          총 이미지 {images.length}장
-        </AllImageText>
-      </Description>
-    )
-  }
+  const DescriptionContent = () => (
+    <Description>
+      <TitleText>{title}</TitleText>
+      <DateText>
+        {startDate} - {endDate}
+      </DateText>
+      <AllImageText>총 이미지 {images.length}장</AllImageText>
+    </Description>
+  );
 
   return (
     <Container
@@ -109,10 +102,10 @@ const List = ({ id, title, startDate, endDate, location, images }) => {
       onMouseLeave={onMouseLeaveContainer}
     >
       <Background src={images[0]?.url} draggable={false} />
-      <Title>{title}</Title>
+      <HeartImage src={heart} />
       {isHover ? <DescriptionContent /> : ''}
     </Container>
-  )
-} 
+  );
+};
 
 export default List;
