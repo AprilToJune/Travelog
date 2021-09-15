@@ -3,7 +3,6 @@ import styled from 'styled-components';
 
 import { useExperienceContext } from 'contexts/ExperienceContext';
 import ModalContent from './ModalContent';
-import ModalCloseButton from './ModalCloseButton';
 
 const Container = styled.div`
   display: flex;
@@ -22,11 +21,11 @@ const index = () => {
   const { isModalOpen, handleModalClose } = useExperienceContext();
 
   const handleOnKeyDonw = (event) => {
-    if(event.keyCode === 27) handleModalClose();
-  }
+    if (event.keyCode === 27) handleModalClose();
+  };
 
   useEffect(() => {
-    document.addEventListener("keydown", handleOnKeyDonw);
+    document.addEventListener('keydown', handleOnKeyDonw);
   }, []);
 
   return (
@@ -34,10 +33,9 @@ const index = () => {
       <>
         <Container />
         <ModalContent />
-        <ModalCloseButton />
       </>
     )
   );
-}
+};
 
 export default index;

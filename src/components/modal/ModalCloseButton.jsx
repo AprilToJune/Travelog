@@ -5,16 +5,18 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useExperienceContext } from 'contexts/ExperienceContext';
 
 const Container = styled.div`
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: 50%;
   left: 0;
-  padding: 10px;
-  margin: 10px;
+  transform: translateY(-50%);
+  padding: 5px;
+  margin-left: 15px;
   z-index: 15;
   transition: all 0.3s ease;
+  border-radius: 10px;
 
   :hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
     cursor: pointer;
   }
 `;
@@ -24,9 +26,9 @@ const ModalCloseButton = () => {
 
   return (
     <Container onClick={handleModalClose}>
-      <CloseIcon />
+      <CloseIcon style={{ color: 'white' }} />
     </Container>
-  );  
+  );
 };
 
 export default ModalCloseButton;
