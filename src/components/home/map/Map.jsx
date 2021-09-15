@@ -50,7 +50,7 @@ const Map = () => {
 
   const [changePlace, setChangePlace] = useState(17);
 
-  //지도 영역을 결정하는 polygon을 생성하여 지도 위에
+  //지도 영역을 결정하는 polygon을 생성하여 지도
   function makePolygon(geojson) {
     const data = geojson.features;
     let coordi = []; // 좌표 저장 배열
