@@ -15,7 +15,7 @@ const mapOption = {
   level: 13, // 지도의 확대 레벨
 };
 
-const mapCenter = [
+const centerOfRegions = [
   ['강원', 11, 128.32481502321897, 37.80488331383935],
   ['경기', 11, 127.10939551302752, 37.572406668451116],
   ['경남', 11, 128.36784396735032, 35.34078921005318],
@@ -42,64 +42,20 @@ const Map = () => {
   const map = useRef(null);
 
   const [polygons, setPolygons] = useState([]);
-  const [customOverlay, setCustomOverlay] = useState([]);
+  const [numberOfmarkers, setNumberOfmarkers] = useState([]);
   const [markers, setMarkers] = useState([]);
 
-  const [prePolygonLevel, setPrePolygonLevel] = useState(13);
-  const [preCustomLevel, setPreCustomLevel] = useState(12);
+  const [preLevel_Polygon, setPreLevel_Polygons] = useState(13);
+  const [preLevel_NumberOfMarkers, setPreLevel_NumberOfMarkers] = useState(12);
 
   const [changePlace, setChangePlace] = useState(17);
 
-  // mapLocationCount가 바뀔 때 마다 실행
-  // mapLocationCount = [
-  //     {
-  //       "location": "경기",
-  //       "count": 1
-  //   },
-  //   {
-  //       "location": "충남",
-  //       "count": 2
-  //   },
-  //   {
-  //       "location": "대전",
-  //       "count": 1
-  //   },
-  //   {
-  //       "location": "대구",
-  //       "count": 1
-  //   },
-  //   {
-  //       "location": "충남",
-  //       "count": 2
-  //   }
-  // ]
-  useEffect(() => {
-    // mapCenter를 돌면서 LatLng가 같은 곳을 찾음
-    mapCenter.forEach((center) => {
-      mapLocationCount.forEach((val) => {
-        // "경기"  ===  "경기"
-        if (center[0] === val.location) {
-          const newPosition = new kakao.maps.LatLng(center[3], center[2]);
-
-          const tempCustomOverlay = new kakao.maps.CustomOverlay({
-            map: map.current,
-            position: newPosition,
-            content:
-              `<div style="height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;">` +
-              val.count +
-              '</div>',
-          });
-
-          setCustomOverlay((PreState) => [...PreState, tempCustomOverlay]);
-        }
-      });
-    });
-  }, [dataLoading]);
-
+  //지도 영역을 결정하는 polygon을 생성하여 지도 위에
   function makePolygon(geojson) {
     const data = geojson.features;
     let coordi = []; // 좌표 저장 배열
 
+    //data 순서
     //강원도, 경기도, 경상남도, 경상북도, 광주, 대구, 대전, 부산, 서울, 세종, 울산, 인천, 전라남도, 전라북도, 제주도, 충청남도, 충청북도
     data.forEach((val, idx) => {
       coordi = val.geometry.coordinates;
@@ -128,47 +84,89 @@ const Map = () => {
 
       kakao.maps.event.addListener(polygon, 'mouseout', function () {
         polygon.setOptions({ fillColor: '#fff' });
-        customOverlay.forEach((val) => {
-          val.setMap(null);
-        });
       });
 
-      kakao.maps.event.addListener(polygon, 'click', function (mouseEvent) {
+      //지역을 클릭하면, 해당 지역으로 확대
+      kakao.maps.event.addListener(polygon, 'click', function () {
         var moveCenter = new kakao.maps.LatLng(
-          mapCenter[idx][3],
-          mapCenter[idx][2],
+          centerOfRegions[idx][3],
+          centerOfRegions[idx][2],
         );
         map.current.setCenter(moveCenter);
-        map.current.setLevel(mapCenter[idx][1]);
+        map.current.setLevel(centerOfRegions[idx][1]);
 
         setChangePlace(idx);
       });
 
+      //polygon 집합을 Polygons에 저장
       setPolygons((PreState) => [...PreState, polygon]);
       polygon.setMap(map.current);
     });
   }
 
+  //exp를 지역별로 숫자로 표현하는 numberOfmarker 생성하여 지도 위에
+  useEffect(() => {
+    centerOfRegions.forEach((center, idx) => {
+      mapLocationCount.forEach((val) => {
+        if (center[0] === val.location) {
+          //numberOfmarkers의 구성
+          const content = document.createElement('div');
+          content.style =
+            'height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white';
+          content.innerHTML = val.count;
+          content.addEventListener('click', function () {
+            var moveCenter = new kakao.maps.LatLng(
+              centerOfRegions[idx][3],
+              centerOfRegions[idx][2],
+            );
+            map.current.setCenter(moveCenter);
+            map.current.setLevel(centerOfRegions[idx][1]);
+
+            setChangePlace(idx);
+          });
+
+          //numberOfmarkers 생성
+          const position = new kakao.maps.LatLng(center[3], center[2]);
+          const numberOfmarker = new kakao.maps.CustomOverlay({
+            map: map.current,
+            position,
+            content,
+          });
+          //numberOfmarker 집합을 numberOfmarkers에 저장
+          setNumberOfmarkers((PreState) => [...PreState, numberOfmarker]);
+        }
+      });
+    });
+  }, [dataLoading]);
+
+  //exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
   useEffect(() => {
     markers.forEach((val) => {
       val.setMap(null);
     });
     setMarkers([]);
-    const geocoder = new kakao.maps.services.Geocoder();
+
+    const geocoder = new kakao.maps.services.Geocoder(); //문자열을 좌표값으로 변환
     experiences.forEach((exp) => {
+      //이 부근에서 TypeError: Cannot read properties of undefined (reading '0')
       const dis = exp.location.split(' ')[0];
-      if (mapCenter[changePlace][0] == dis) {
+      if (centerOfRegions[changePlace][0] == dis) {
         geocoder.addressSearch(exp.location, function (result, status) {
-          // 정상적으로 검색이 완료됐으면
+          // 정상적으로 검색이 완료
           if (status === kakao.maps.services.Status.OK) {
-            const newPosition = new kakao.maps.LatLng(result[0].y, result[0].x);
+            const position = new kakao.maps.LatLng(result[0].y, result[0].x);
             const marker = new kakao.maps.Marker({
               map: map.current,
-              position: newPosition,
+              position,
               title: exp.id,
             });
+
+            kakao.maps.event.addListener(marker, 'click', () => {
+              //액션 추가
+              console.log('마커 클릭으로 id 가져옴', marker.Fb);
+            });
+            //marker 집합을 markers에 저장
             setMarkers((PreState) => [...PreState, marker]);
-            console.log('마커 id 가져옴', marker.Fb);
           }
         });
       }
@@ -176,31 +174,31 @@ const Map = () => {
   }, [changePlace]);
 
   useEffect(() => {
-    if (preCustomLevel == 0 && 12 == mapLevel) {
-      setPreCustomLevel(12);
-
+    //지도 확대 레벨에 따라, numberOfMarkers의 유무를 결정
+    if (preLevel_NumberOfMarkers == 0 && 12 == mapLevel) {
+      setPreLevel_NumberOfMarkers(12);
       if (markers.length) {
         markers.forEach((val) => {
           val.setMap(null);
         });
       }
-      customOverlay.forEach((val) => {
+      numberOfmarkers.forEach((val) => {
         val.setMap(map.current);
       });
-    } else if (mapLevel < 12 && preCustomLevel == 12) {
-      setPreCustomLevel(0);
-      customOverlay.forEach((val) => {
+    } else if (mapLevel < 12 && preLevel_NumberOfMarkers == 12) {
+      setPreLevel_NumberOfMarkers(0);
+      numberOfmarkers.forEach((val) => {
         val.setMap(null);
       });
     }
-
-    if (prePolygonLevel == 0 && 8 <= mapLevel) {
-      setPrePolygonLevel(13);
+    //지도 확대 레벨에 따라, polygons의 유무를 결정
+    if (preLevel_Polygon == 0 && 8 <= mapLevel) {
+      setPreLevel_Polygons(13);
       polygons.forEach((val) => {
         val.setMap(map.current);
       });
-    } else if (mapLevel < 8 && 13 == prePolygonLevel) {
-      setPrePolygonLevel(0);
+    } else if (mapLevel < 8 && 13 == preLevel_Polygon) {
+      setPreLevel_Polygons(0);
       polygons.forEach((val) => {
         val.setMap(null);
       });
@@ -208,9 +206,7 @@ const Map = () => {
   }, [mapLevel]);
 
   useEffect(() => {
-    console.log('mapLocationCount', mapLocationCount);
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
-    // makeOverlay();
     makePolygon(geojson12);
 
     kakao.maps.event.addListener(map.current, 'zoom_changed', function () {
@@ -219,24 +215,9 @@ const Map = () => {
     });
   }, []);
 
-  // const makeOverlay = useCallback(() => {
-  //   mapCenter.forEach((center, idx) => {
-  //     const newPosition = new kakao.maps.LatLng(center[3], center[2]);
-  //     console.log('mapLocationCount[idx]', mapLocationCount[idx]);
-  //     const customOverlay = new kakao.maps.CustomOverlay({
-  //       map: map.current,
-  //       position: newPosition,
-  //       content: `<div>${mapLocationCount[idx].count}</div>`,
-  //     });
-
-  //     setCustomOverlay((PreState) => [...PreState, customOverlay]);
-  //   });
-  // }, [mapLocationCount])
-
   return (
     <Container>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      {mapLevel}
     </Container>
   );
 };
