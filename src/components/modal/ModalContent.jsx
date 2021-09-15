@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Slider from "react-slick";
+import Slider from 'react-slick';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 
 import { useExperienceContext } from 'contexts/ExperienceContext';
+import ModalCloseButton from './ModalCloseButton';
 
 const Container = styled.div`
   position: fixed;
@@ -29,14 +30,31 @@ const Container = styled.div`
 
 const DescriptionContainer = styled.div`
   display: flex;
-  column-gap: 4px;
-  align-items: baseline;
-  background-color: rgba(0, 0, 0, 0.7);
   position: fixed;
+  width: 100vw;
   right: 0;
-  bottom: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.7);
   padding: 6px;
   z-index: 15;
+`;
+
+const DescriptionSubContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const DescriptionSubTop = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: right;
+`;
+
+const DescriptionSubBottom = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: right;
 `;
 
 const IndexContainer = styled.div`
@@ -110,9 +128,7 @@ const RightArrowContainerWithIcon = styled.div`
 function SamplePrevArrow(props) {
   const { onClick } = props;
   return (
-    <LeftArrowContainerWithIcon
-      onClick={onClick}
-    >
+    <LeftArrowContainerWithIcon onClick={onClick}>
       <ArrowLeftIcon />
     </LeftArrowContainerWithIcon>
   );
@@ -121,9 +137,7 @@ function SamplePrevArrow(props) {
 function SampleNextArrow(props) {
   const { onClick } = props;
   return (
-    <RightArrowContainerWithIcon
-      onClick={onClick}
-    >
+    <RightArrowContainerWithIcon onClick={onClick}>
       <ArrowRightIcon />
     </RightArrowContainerWithIcon>
   );
@@ -148,11 +162,19 @@ const ModalContent = () => {
   return (
     <>
       <DescriptionContainer>
-        <Date>{startDate === endDate ? startDate : `${startDate} - ${endDate}`}</Date>
-        <Slash>/</Slash>
-        <Location>{location}</Location>
-        <Slash>/</Slash>
-        <Title>{title}</Title>
+        <ModalCloseButton />
+        <DescriptionSubContainer>
+          <DescriptionSubTop>
+            <Title>{title}</Title>
+          </DescriptionSubTop>
+          <DescriptionSubBottom>
+            <Date>
+              {startDate === endDate ? startDate : `${startDate} - ${endDate}`}
+            </Date>
+            <Slash>/</Slash>
+            <Location>{location}</Location>
+          </DescriptionSubBottom>
+        </DescriptionSubContainer>
       </DescriptionContainer>
       <IndexContainer>
         <Index>{currentIndex}</Index>
@@ -163,15 +185,14 @@ const ModalContent = () => {
         {/* eslint-disable-next-line */}
         <Slider {...settings}>
           {images.map((image) => (
-              <div key={image.index}>
-                <img src={image.url} alt="my-experiences" />
-              </div>
-            ),
-          )}
+            <div key={image.index}>
+              <img src={image.url} alt="my-experiences" />
+            </div>
+          ))}
         </Slider>
       </Container>
     </>
-  );  
+  );
 };
 
 export default ModalContent;
