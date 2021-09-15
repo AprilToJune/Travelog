@@ -37,7 +37,7 @@ const centerOfRegions = [
 
 const Map = () => {
   const [mapLevel, setMapLevel] = useState(12);
-  const { experiences, mapLocationCount, dataLoading } = useExperienceContext();
+  const { experiences, mapLocationCount, isDataLoading, handleMarkerClick } = useExperienceContext();
   const mapContainer = useRef(null);
   const map = useRef(null);
 
@@ -137,7 +137,7 @@ const Map = () => {
         }
       });
     });
-  }, [dataLoading]);
+  }, [isDataLoading]);
 
   //exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
   useEffect(() => {
@@ -161,10 +161,12 @@ const Map = () => {
               title: exp.id,
             });
 
+            //마커 클릭 시 모달을 띄우는 로직을 추가해줌
             kakao.maps.event.addListener(marker, 'click', () => {
-              //액션 추가
-              console.log('마커 클릭으로 id 가져옴', marker.Fb);
+              const experienceId = marker.Fb;
+              handleMarkerClick(experienceId);
             });
+            
             //marker 집합을 markers에 저장
             setMarkers((PreState) => [...PreState, marker]);
           }

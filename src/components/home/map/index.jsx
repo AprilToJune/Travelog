@@ -13,16 +13,8 @@ const Container = styled.div`
   background-color: rgba(0, 0, 0, 0.3);
 `;
 
-const Text = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin: 10px;
-`;
-
 const index = () => (
   <Container>
-    <Text>맵 컨테이너</Text>
     <Map />
   </Container>
 );
