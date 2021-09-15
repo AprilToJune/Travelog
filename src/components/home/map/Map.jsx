@@ -48,7 +48,7 @@ const Map = () => {
   const [preLevel_Polygon, setPreLevel_Polygons] = useState(13);
   const [preLevel_NumberOfMarkers, setPreLevel_NumberOfMarkers] = useState(12);
 
-  const [changePlace, setChangePlace] = useState(17);
+  const [changePlace, setChangePlace] = useState(16);
 
   //지도 영역을 결정하는 polygon을 생성하여 지도
   function makePolygon(geojson) {
@@ -141,16 +141,17 @@ const Map = () => {
 
   //exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
   useEffect(() => {
-    markers.forEach((val) => {
-      val.setMap(null);
-    });
-    setMarkers([]);
+    // markers.forEach((val) => {
+    //   val.setMap(null);
+    // });
+    // setMarkers([]);
 
     const geocoder = new kakao.maps.services.Geocoder(); //문자열을 좌표값으로 변환
     experiences.forEach((exp) => {
       //이 부근에서 TypeError: Cannot read properties of undefined (reading '0')
       const dis = exp.location.split(' ')[0];
-      if (centerOfRegions[changePlace][0] == dis) {
+      console.log('dis', dis);
+      if (centerOfRegions[changePlace][0] === dis) {
         geocoder.addressSearch(exp.location, function (result, status) {
           // 정상적으로 검색이 완료
           if (status === kakao.maps.services.Status.OK) {
