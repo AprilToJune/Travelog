@@ -79,7 +79,6 @@ const ExperienceProvider = ({ children }) => {
 
     Promise.all(promises)
       .then(() => {
-        console.log('다 가져옴');
         setDataLoading(false);
       })
       .catch((err) => alert(err));
