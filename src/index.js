@@ -6,17 +6,20 @@ import { resetServerContext } from 'react-beautiful-dnd';
 import './index.css';
 import UploadProvider from 'contexts/UploadContext';
 import ExperienceProvider from 'contexts/ExperienceContext';
+import KakaoMapProvider from 'contexts/KakaoMapContext';
 import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ExperienceProvider>
-      <UploadProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </UploadProvider>
-    </ExperienceProvider>
+    <KakaoMapProvider>
+      <ExperienceProvider>
+        <UploadProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </UploadProvider>
+      </ExperienceProvider>
+    </KakaoMapProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

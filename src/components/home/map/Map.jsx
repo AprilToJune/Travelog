@@ -141,11 +141,6 @@ const Map = () => {
 
   //exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
   useEffect(() => {
-    // markers.forEach((val) => {
-    //   val.setMap(null);
-    // });
-    // setMarkers([]);
-
     const geocoder = new kakao.maps.services.Geocoder(); //문자열을 좌표값으로 변환
     experiences.forEach((exp) => {
       //이 부근에서 TypeError: Cannot read properties of undefined (reading '0')

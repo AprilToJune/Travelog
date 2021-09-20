@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Map from 'components/home/map/Map';
+// import Map from 'components/home/map/Map';
+import KakaoMap from 'components/home/map/KakaoMap';
 
 const Container = styled.div`
   position: relative;
@@ -15,7 +16,7 @@ const Container = styled.div`
 
 const index = () => (
   <Container>
-    <Map />
+    <KakaoMap />
   </Container>
 );
 
