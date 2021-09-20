@@ -1,5 +1,6 @@
 /* global kakao */
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useKakaoMapState, useKakaoMapDispatch } from 'contexts/KakaoMapContext';
 
 const mapInitialState = {
   center: new kakao.maps.LatLng(35.93450063771281, 127.75854915532611), // 지도의 중심좌표
@@ -22,7 +23,8 @@ const mapInitialState = {
 
 const KakaoMap = ({ children }) => {
   const container = useRef(null);
-  const [map, setMap] = useState(null);
+  const { map } = useKakaoMapState();
+  const { setMap } = useKakaoMapDispatch();
 
   useEffect(() => {
     if (!window.kakao) {

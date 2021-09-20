@@ -50,7 +50,8 @@ const Map = () => {
 
   const [changePlace, setChangePlace] = useState(16);
 
-  //지도 영역을 결정하는 polygon을 생성하여 지도
+  // 폴리곤 컴포넌트를 만들어서 해결
+  // 지도 영역을 결정하는 polygon을 생성하여 지도
   function makePolygon(geojson) {
     const data = geojson.features;
     let coordi = []; // 좌표 저장 배열
@@ -78,7 +79,7 @@ const Map = () => {
         fillOpacity: 0.4,
       });
 
-      kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
+      kakao.maps.event.addListener(polygon, 'mouseover', function () {
         polygon.setOptions({ fillColor: '#09f' });
       });
 
@@ -104,6 +105,10 @@ const Map = () => {
     });
   }
 
+  /*
+    고정된 위치에 생성하는 것임.
+    그러면 experiences 를 불러와서 개수 새는 작업이나 이런건 따로해야함
+  */
   //exp를 지역별로 숫자로 표현하는 numberOfmarker 생성하여 지도 위에
   useEffect(() => {
     centerOfRegions.forEach((center, idx) => {
@@ -139,13 +144,16 @@ const Map = () => {
     });
   }, [isDataLoading]);
 
-  //exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
+  /*
+    마커를 미리 생성해놓고, 글로벌로 줌 레벨에 따라 표시해주고 안해주고를
+    하면 될 듯 ?
+  */
+  // exp를 지역별로 마커로 표현하는 marker를 생성하여 지도 위에
   useEffect(() => {
     const geocoder = new kakao.maps.services.Geocoder(); //문자열을 좌표값으로 변환
     experiences.forEach((exp) => {
       //이 부근에서 TypeError: Cannot read properties of undefined (reading '0')
       const dis = exp.location.split(' ')[0];
-      console.log('dis', dis);
       if (centerOfRegions[changePlace][0] === dis) {
         geocoder.addressSearch(exp.location, function (result, status) {
           // 정상적으로 검색이 완료
@@ -171,6 +179,7 @@ const Map = () => {
     });
   }, [changePlace]);
 
+  // 맵 레벨 컨트롤러를 따로 만들자
   useEffect(() => {
     //지도 확대 레벨에 따라, numberOfMarkers의 유무를 결정
     if (preLevel_NumberOfMarkers == 0 && 12 == mapLevel) {
@@ -203,6 +212,7 @@ const Map = () => {
     }
   }, [mapLevel]);
 
+  // 해결
   useEffect(() => {
     map.current = new kakao.maps.Map(mapContainer.current, mapOption);
     makePolygon(geojson12);
