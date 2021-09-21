@@ -1,43 +1,48 @@
 /* global kakao */
 import { useEffect } from 'react';
-import { useKakaoMapState, /* useKakaoMapDispatch */ } from 'contexts/KakaoMapContext';
-// import { CENTER_OF_REGINOS } from 'constants/index';
+import { useKakaoMapState, useKakaoMapDispatch } from 'contexts/KakaoMapContext';
 
-// lat, log을 props로 받음
-const Marker = ({ lat, lng }) => {
-  const { map } = useKakaoMapState();
-  // const { setNumberOfmarkers } = useKakaoMapDispatch();
+/* 줌 레벨 9 이상일 때 지역에 몇 개 있는지 띄우는 오버레이 */
+const Overlay = ({ lat, lng, level, mapLocationCount }) => {
+  const { map, isVisibleOverlay, overlays } = useKakaoMapState();
+  const { setOverlays } = useKakaoMapDispatch();
 
   useEffect(() => {
     const content = document.createElement('div');
     content.style =
       'height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;';
-    content.innerHTML = 3;
-    // content.addEventListener('click', function () {
-    //   var moveCenter = new kakao.maps.LatLng(
-    //     centerOfRegions[idx][3],
-    //     centerOfRegions[idx][2],
-    //   );
-    //   map.current.setCenter(moveCenter);
-    //   map.current.setLevel(centerOfRegions[idx][1]);
+    content.innerHTML = mapLocationCount;
 
-    //   setChangePlace(idx);
-    // });
+    content.addEventListener('click', () => {
+      const moveCenter = new kakao.maps.LatLng(
+        lat,
+        lng,
+      );
+      map.setCenter(moveCenter);
+      map.setLevel(level);
+    });
 
-    const numberOfmarker = new kakao.maps.CustomOverlay({
+    const overlay = new kakao.maps.CustomOverlay({
       map,
       position: new kakao.maps.LatLng(lat, lng),
       content,
       zIndex: 10,
     });
 
-    numberOfmarker.setMap(map);
-
     // numberOfmarker 집합을 numberOfmarkers에 저장
-    // setNumberOfmarkers((PreState) => [...PreState, numberOfmarker]);
-  }, [map]);
+    setOverlays((PreState) => [...PreState, overlay]);
+  }, [map, mapLocationCount]);
+
+  /* 
+    isVisibleOverlay 바뀔 때마다 동작 
+    isVisibleOverlay는 ZoomLevelControler에서 조정
+  */
+  useEffect(() => {
+    if (isVisibleOverlay) overlays.forEach((overlay) => overlay.setMap(map));
+    else overlays.forEach((overlay) => overlay.setMap(null));
+  }, [isVisibleOverlay]);
 
   return null;
 }
 
-export default Marker;
+export default Overlay;

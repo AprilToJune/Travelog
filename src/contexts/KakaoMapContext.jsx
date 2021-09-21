@@ -5,35 +5,40 @@ const KakaoMapDispatchContext = createContext(null);
 
 const KakaoMapProvider = ({ children }) => {
   const [map, setMap] = useState(null);
-  const [polygon, setPolygon] = useState([]);
-  const [numberOfmarkers, setNumberOfmarkers] = useState([]);
+  const [mapZoomLevel, setMapZoomLevel] = useState();
+
+  /* 각각의 오브젝트들을 담아줄 배열 */
+  const [polygons, setPolygons] = useState([]);
+  const [overlays, setOverlays] = useState([]);
   const [markers, setMarkers] = useState([]);
 
-  const [preLevelPolygon, setPreLevelPolygons] = useState(13);
-  const [preLevelNumberOfMarkers, setPreLevelNumberOfMarkers] = useState(12);
-
-  const [changePlace, setChangePlace] = useState(16);
+  /* mapZoomLevel에 따라서 바뀌는 변수들 */
+  const [isVisiblePolygon, setIsVisiblePolygon] = useState(true);
+  const [isVisibleOverlay, setIsVisibleOverlay] = useState(true);
+  const [isVisibleMarker, setIsVisibleMarker] = useState(false);
 
   return (
-    // state provider
+    /* state provider */
     <KakaoMapStateContext.Provider value={{ 
         map,
-        polygon,
-        numberOfmarkers,
+        mapZoomLevel,
+        polygons,
+        overlays,
         markers,
-        preLevelPolygon,
-        preLevelNumberOfMarkers,
-        changePlace,
+        isVisiblePolygon,
+        isVisibleMarker,
+        isVisibleOverlay,
     }}>
       {/* function provider */}
       <KakaoMapDispatchContext.Provider value={{ 
         setMap,
-        setPolygon,
-        setNumberOfmarkers,
+        setMapZoomLevel,
+        setPolygons,
+        setOverlays,
         setMarkers,
-        setPreLevelPolygons,
-        setPreLevelNumberOfMarkers,
-        setChangePlace,
+        setIsVisiblePolygon,
+        setIsVisibleMarker,
+        setIsVisibleOverlay,
       }}>
         {children}
       </KakaoMapDispatchContext.Provider>

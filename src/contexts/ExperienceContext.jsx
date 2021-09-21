@@ -11,25 +11,25 @@ import { firestore } from '../firebaseInit';
 
 const ExperienceContext = createContext({});
 
-const MapLocationCount = [
-  { location: '강원', count: 0 },
-  { location: '경기', count: 0 },
-  { location: '경남', count: 0 },
-  { location: '경북', count: 0 },
-  { location: '광주', count: 0 },
-  { location: '대구', count: 0 },
-  { location: '대전', count: 0 },
-  { location: '부산', count: 0 },
-  { location: '서울', count: 0 },
-  { location: '세종', count: 0 },
-  { location: '울산', count: 0 },
-  { location: '인천', count: 0 },
-  { location: '전남', count: 0 },
-  { location: '전북', count: 0 },
-  { location: '제주', count: 0 },
-  { location: '충남', count: 0 },
-  { location: '충북', count: 0 },
-];
+const InitialMapLocationCount = {
+  '강원': 0,
+  '경기': 0,
+  '경남': 0,
+  '경북': 0,
+  '광주': 0,
+  '대구': 0,
+  '대전': 0,
+  '부산': 0,
+  '서울': 0,
+  '세종': 0,
+  '울산': 0,
+  '인천': 0,
+  '전남': 0,
+  '전북': 0,
+  '제주': 0,
+  '충남': 0,
+  '충북': 0,
+};
 
 const ExperienceProvider = ({ children }) => {
   // { id: 고유 값, title: 제목, startDate: 시작 날짜, endDate: 끝 날짜, location: 여행 위치, images: 이미지 } = experience;
@@ -46,7 +46,7 @@ const ExperienceProvider = ({ children }) => {
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // 현재의 맵에 핀이 어느지역에 몇 개 꽂힐 것인지 확인하는 함수
-  const [mapLocationCount, setMapLocationCount] = useState([]);
+  const [mapLocationCount, setMapLocationCount] = useState(InitialMapLocationCount);
 
   const handleModalOpen = useCallback(() => {
     setIsModalOpen(true);
@@ -86,13 +86,9 @@ const ExperienceProvider = ({ children }) => {
         images: data.images,
       };
 
-      const dis = data.location.split(' ')[0];
-      MapLocationCount.forEach((val) => {
-        if (val.location === dis) {
-          val.count += 1;
-          setMapLocationCount((prevState) => [...prevState, val]);
-        }
-      });
+      const region = data.location.split(' ')[0];
+      InitialMapLocationCount[region] += 1;
+      setMapLocationCount(InitialMapLocationCount);
       setExperiences((prevState) => [...prevState, exp]);
     });
 

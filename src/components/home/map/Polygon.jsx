@@ -1,14 +1,15 @@
 /* global kakao */
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useKakaoMapState, useKakaoMapDispatch } from 'contexts/KakaoMapContext';
 import GEO_JSON from 'lib/TL_SCCO_CTPRVN.json';
 import { CENTER_OF_REGINOS } from 'constants/index';
 
+/* 지역 폴리곤 컴포넌트 */
 const Polygon = () => {
-  const { map } = useKakaoMapState();
-  const { setPolygon, setChangePlace } = useKakaoMapDispatch();
+  const { map, isVisiblePolygon, polygons } = useKakaoMapState();
+  const { setPolygons } = useKakaoMapDispatch();
 
-  function makePolygon() {
+  const makePolygon = useCallback(() => {
     const data = GEO_JSON.features;
     let coordi = []; // 좌표 저장 배열
 
@@ -45,21 +46,29 @@ const Polygon = () => {
       // 지역을 클릭하면, 해당 지역으로 확대
       kakao.maps.event.addListener(polygon, 'click', () => {
         const moveCenter = new kakao.maps.LatLng(
-          CENTER_OF_REGINOS[idx][3],
-          CENTER_OF_REGINOS[idx][2],
+          CENTER_OF_REGINOS[idx].lat,
+          CENTER_OF_REGINOS[idx].lng,
         );
         map.setCenter(moveCenter);
-        map.setLevel(CENTER_OF_REGINOS[idx][1]);
-
-        setChangePlace(idx);
+        map.setLevel(CENTER_OF_REGINOS[idx].level);
       });
 
       // polygon 집합을 Polygons에 저장
-      setPolygon((PreState) => [...PreState, polygon]);
+      setPolygons((PreState) => [...PreState, polygon]);
       polygon.setMap(map);
     });
-  }
+  }, []);
 
+  /* 
+    isVisiblePolygon가 바뀔 때마다 동작 
+    isVisiblePolygon은 ZoomLevelControler에서 조정
+  */
+  useEffect(() => {
+    if (isVisiblePolygon) polygons.forEach((polygon) => polygon.setMap(map));
+    else polygons.forEach((polygon) => polygon.setMap(null));
+  }, [isVisiblePolygon]);
+
+  /* 맨 처음 맵이 만들어졌을 때 한번 실행 */
   useEffect(() => {
     makePolygon();
   }, [map])

@@ -21,6 +21,7 @@ const mapInitialState = {
   */
 };
 
+/* 카카오맵 띄워주는 컴포넌트 */ 
 const KakaoMap = ({ children }) => {
   const container = useRef(null);
   const { map } = useKakaoMapState();
