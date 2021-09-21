@@ -8,6 +8,8 @@ const Overlay = ({ lat, lng, level, mapLocationCount }) => {
   const { setOverlays } = useKakaoMapDispatch();
 
   useEffect(() => {
+    // 0일땐 안보여줌
+    if (!mapLocationCount) return;
     const content = document.createElement('div');
     content.style =
       'height: 27px; width: 30px; border-radius: 50%; text-align: center; padding-top:2px; font-weight: bold; background-color: #09f; color: white;';
