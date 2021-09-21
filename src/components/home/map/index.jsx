@@ -22,7 +22,7 @@ const index = () => (
   <Container>
     <KakaoMap>
       <Polygon />
-      {CENTER_OF_REGINOS.map((center) => <Overlay key={center[0]} lat={center[3]} log={center[2]} />)}
+      {CENTER_OF_REGINOS.map((region) => <Overlay key={region.name} lat={region.lat} lng={region.lng} />)}
     </KakaoMap>
   </Container>
 );

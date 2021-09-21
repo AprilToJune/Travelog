@@ -4,7 +4,7 @@ import { useKakaoMapState, /* useKakaoMapDispatch */ } from 'contexts/KakaoMapCo
 // import { CENTER_OF_REGINOS } from 'constants/index';
 
 // lat, log을 props로 받음
-const Marker = ({ lat, log }) => {
+const Marker = ({ lat, lng }) => {
   const { map } = useKakaoMapState();
   // const { setNumberOfmarkers } = useKakaoMapDispatch();
 
@@ -26,7 +26,7 @@ const Marker = ({ lat, log }) => {
 
     const numberOfmarker = new kakao.maps.CustomOverlay({
       map,
-      position: new kakao.maps.LatLng(lat, log),
+      position: new kakao.maps.LatLng(lat, lng),
       content,
       zIndex: 10,
     });
